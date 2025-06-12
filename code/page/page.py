@@ -1,8 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import hashlib
+from datetime import datetime
 
 from data_parse.data_parse import DataParse
+from persistence.persistence_engine import PersistenceEngine
 
 
 class Page:
@@ -14,9 +16,10 @@ class Page:
 
 class PageMonitor:
 
-    def __init__(self, page: Page, parser : DataParse, timeout : int = 10):
+    def __init__(self, page: Page, parser : DataParse, persistence : PersistenceEngine, timeout : int = 10):
         self.page = page or Page()
         self.parser = parser or DataParse()
+        self.persistence = persistence or PersistenceEngine()
         self.timeout = timeout
         self.last_hash = None
 
@@ -61,12 +64,25 @@ class PageMonitor:
 
             print(f"✅ Initial content saved, hash: {self.last_hash}")
 
+            
+            now = datetime.now()
+            self.persistence.add_content(self.page.name, now, self.last_hash, content)
+
             return False
         
         if current_hash != self.last_hash:
             print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
             self.last_hash = current_hash
+
+            
+            now = datetime.now()
+            self.persistence.add_content(self.page.name, now, self.last_hash, content)
+
+
             return True
         else:
             print("⚠️ No change detected.")
+
+            now = datetime.now()
+            self.persistence.add_content(self.page.name, now, self.last_hash, None)
             return False

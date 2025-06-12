@@ -1,6 +1,7 @@
 # environment
-snooplyze
+/snooplyze
 .env
+/persistence
 
 # Python temp files
 __pycache__/
