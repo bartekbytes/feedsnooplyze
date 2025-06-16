@@ -1,5 +1,13 @@
 from abc import ABC, abstractmethod
+from enum import Enum
+
 import duckdb
+
+class PersistenceEngineType(Enum):
+    FLAT_FILE = 1
+    DUCK_DB = 2
+    SQLITE = 3
+
 
 class PersistenceEngine(ABC):
     

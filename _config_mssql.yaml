@@ -1,0 +1,5 @@
+Config:
+  - persistence: mssql
+    connection_string: MYSQLSUPERINSTANCE
+    database_name: vizdb
+  - pool_time: 120

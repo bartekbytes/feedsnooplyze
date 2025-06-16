@@ -19,6 +19,6 @@ All notable changes to this project will be documented in this file.
 - First working code.
 - Code base divided into folders - first structure
 - Classes **Page** and **PageMonitor** added.
-- Classes **DataParse** (abstract class) and **AllDocumentDataParse** **MainElementDataParse** **DivClassDataParse** added.
+- Classes **Parser** (abstract class) and **AllDocumentParser** **MainElementParser** **DivClassParser** added.
 
 ### Fixes
