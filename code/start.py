@@ -52,12 +52,15 @@ def fetch_csv(pooling_time : int):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="📦 snooplyze", epilog="Example usage:\n  myapp.py --command setup\n  myapp.py -c fetch", formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description="📦 snooplyze",
+        epilog="Example usage:\n  snooplyze.py --run-mode [setup|fetch]\n --pooling-time [in seconds]\n --config-file [path to conf]",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
     parser.add_argument("-r", "--run-mode", type=str, choices=["setup", "fetch"], required=True, help="Run mode of snooplyze: setup or fetch")
-    parser.add_argument("-p", "--pooling-time", type=int, help="How often to pool data")
-    parser.add_argument("-f", "--config-file", type=str, help="Path to configuration file")
-
-
+    parser.add_argument("-ft", "--fetch-type", type=str, choices=["interactive", "oneshot"], required=False, help="Fetch type: interactive in console, oneshot run from external orchestrator")
+    parser.add_argument("-p", "--pooling-time", type=int, help="When fetch-type is interactive, how often to pool data")
+    parser.add_argument("-f", "--config-file", type=str, required=True, help="Path to configuration file")
     
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -66,46 +69,65 @@ def main():
     args = parser.parse_args()
     print(args) # debug, to delete
 
-    #if args.run_mode == 'fetch' and args.config_file is None:
-    #    parser.error("--config_file is required when --run_mode is 'fetch'")
+    # Check arguments consistency
+    if args.run_mode == 'fetch' and args.fetch_type is None:
+        parser.error("When run-mode is 'fetch', fetch-type must be provided")
+
+    if args.run_mode == 'fetch' and args.fetch_type == 'interactive' and args.pooling_time is None:
+        parser.error("When run-mode is 'fetch' and fetch-type is 'interactive' then pooling-time must be provided")
+
 
     # TODO: for now only DuckDB engine is supported for setup
     if args.run_mode == 'setup':
 
+        from configuration.config import ConfigLoader, ConfigReader, Config
+        cr = ConfigReader(args.config_file)
+        cl = ConfigLoader(reader=cr)
+        config = cl.load_config()
+        print(config)
+
+        config.persistence_config.persistence
+        
         print("🔧 Running setup...")
-        pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCK_DB)
-        pe.execute_setup()
+
+        if config.persistence_config.persistence == "duckdb":
+            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCK_DB)
+            pe.set_dbname(config.persistence_config.db_file_path)
+            pe.execute_setup()
+        else:
+            print(f"{config.persistence_config.persistence} is not supported")
+            exit(1)
 
     elif args.run_mode == 'fetch':
         
-        if args.config_file:
-            config = PagesConfig(path_to_file=args.config_file)
-            #(c, m) = config.parse_yaml()
-            #print(c)
-            #print(m)
+        config = PagesConfig(path_to_file=args.config_file)
+        print(config)
+        #(c, m) = config.parse_yaml()
+        #print(c)
+        #print(m)
 
-            # One time pooling
-            #if c.pool_time == 0:
-                #print("📥 Fetching data...")
-                #[mm.check_for_update() for mm in m]
-            
-            #else:
-                
-                # pooling in a loop
-                #while True:
-                    #print("📥 Fetching data...")
-                    #time.sleep(c.pool_time)
-                    #[mm.check_for_update() for mm in m]
-            
-        #else:
+        # One time pooling
+        #if c.pool_time == 0:
             #print("📥 Fetching data...")
-            #fetch_csv(pooling_time=args.pooling_time)
+            #[mm.check_for_update() for mm in m]
+        
+        #else:
+            
+            # pooling in a loop
+            #while True:
+                #print("📥 Fetching data...")
+                #time.sleep(c.pool_time)
+                #[mm.check_for_update() for mm in m]
+        
+    #else:
+        #print("📥 Fetching data...")
+        #fetch_csv(pooling_time=args.pooling_time)
 
 
 if __name__ == "__main__":
-    #main()
+    main()
     
-    print("haha!")
+    #print("haha!")
     
     
 
@@ -129,53 +151,26 @@ if __name__ == "__main__":
 
     ###################################
 
-    from configuration.pages_config import *
-    pcr = PagesConfigReader(r"C:\code\snooplyze\snooplyze.yaml")
-    print(pcr)
+    #from configuration.pages_config import *
+    #pcr = PagesConfigReader(r"C:\code\snooplyze\snooplyze.yaml")
+    #print(pcr)
 
-    pcl = PagesConfigLoader(reader=pcr)
-    print(pcl)
-    pages_monitors = pcl.load_config()
+    #pcl = PagesConfigLoader(reader=pcr)
+    #print(pcl)
+    #pages_monitors = pcl.load_config()
 
-    print(pages_monitors)
+    #print(pages_monitors)
 
-    print("---------")
+    #print("---------")
 
-    for pm in pages_monitors:
-        print(pm)
-        pm.check_for_update_new()
+    #for pm in pages_monitors:
+        #print(pm)
+        #pm.check_for_update_new()
     
 
-    while True:
-        time.sleep(10)
-        [pm.check_for_update_new() for pm in pages_monitors]
-
-    #for l in lll:
-        #print(l)
-        #l.check_for_update_new()
-        
-
-
-    ########################
-
-    #c = PagesConfig(path_to_file=r"../snooplyze.yaml")
-    #parsing_result = c.parse()
-
-    #if parsing_result:
-        #(config, page_monitor) = c.process_config_data()
-        #print(config)
-        #print(page_monitor)
-
-    #####################
-
-    #config = PagesConfig(path_to_file=r"../snooplyze.yaml")
-    #(c, monitors) = config.parse_yaml()
-    #print(monitors)
-
-    # Poll every 'pooling_time' seconds
     #while True:
         #time.sleep(10)
-        #[m.check_for_update() for m in monitors]
+        #[pm.check_for_update_new() for pm in pages_monitors]
 
 
     
