@@ -75,3 +75,30 @@ Output format:
 ## More Detailed Details
 
 ## Main points
+
+## Example how to use classess directly
+
+```python
+def fetch():
+
+    # Persistence Configuration, here Ducn DB engine
+    ddbpe = DuckDbPersistenceEngine(database="../persistence/viz.duckdb")
+    ddbpe.connect()
+
+    # Creating both Pages and PageMonitors
+
+    # 1. Create a fetch for Duck DB blog
+    duckdb_page = Page(name = "Duck DB", url = "https://duckdb.org/news/")
+    duckdb_monitor = PageMonitor(page = duckdb_page, parser = DivClassParser(div_class_name = "newstiles"), persistence = ddbpe, timeout = 10)
+
+    # 2. Create a fetch for Databricks blog
+    databricks_page = Page(name = "Databricks Blog", url = "https://www.databricks.com/blog")
+    databricks_monitor = PageMonitor(page = databricks_page, parser=AllDocumentParser(), persistence = ddbpe, timeout = 10)
+
+    # Poll every 60 seconds
+    while True:
+        time.sleep(60)
+        monitors = [duckdb_monitor, databricks_monitor]
+        [m.check_for_update() for m in monitors]
+
+```
