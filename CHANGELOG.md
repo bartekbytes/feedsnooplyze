@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-07-04
+
+### Changes
+
+- All code moved from `code` folder to `snooplyze` folder [#3]
+
+### Fixes
+
+- Wrong parameter name used in the code `pool-time`, should be `pooling-time` [#4]
+
 ## [0.1.0] - 2025-07-04
 
 ### Changes
