@@ -115,7 +115,7 @@ def main():
                         pc = pm.check_for_update(latest_persisted_hash=None)
                         persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
 
-                time.sleep(args.pool_time)
+                time.sleep(args.pooling_time)
         
         elif args.fetch_type == 'oneshot':
             print("📥 Fetching data (oneshot)...")
