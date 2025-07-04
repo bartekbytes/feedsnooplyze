@@ -3,9 +3,12 @@ from enum import Enum
 
 import duckdb
 
+
+from page.page import PageContent
+
 class PersistenceEngineType(Enum):
-    FLAT_FILE = 1
-    DUCK_DB = 2
+    FLATFILE = 1
+    DUCKDB = 2
     SQLITE = 3
 
 
@@ -47,8 +50,19 @@ class DuckDbPersistenceEngine(PersistenceEngine):
             return None
             
     def add_content(self, name : str, time_added : str, hash : str, content : str):
-        self.connection.execute("INSERT INTO content (Id, Name, TimeAdded, Hash, Content) VALUES (?, ?, ?, ?, ?)", (666, name, time_added, hash, content))
+        self.connection.execute("INSERT INTO Content (Name, TimeAdded, Hash, Content) VALUES (?, ?, ?, ?)", (name, time_added, hash, content))
 
+    def is_content_available(self, name : str) -> bool:
+        sql = f"SELECT 1 FROM Content WHERE Name = '{name}' ORDER BY TimeAdded DESC"
+        if len(self.connection.execute(sql).fetchall()) > 0:
+            return True
+        else: 
+            return False
+
+    def get_latest_by_name(self, name : str) -> PageContent:
+        sql = f"SELECT Name, TimeAdded, Hash, Content FROM Content WHERE Name = '{name}' ORDER BY TimeAdded DESC LIMIT 1"
+        pc = self.connection.execute(sql).fetchall()
+        return PageContent(name=pc[0][0], is_new=None, is_update=None, creation_time=pc[0][1], update_time=None, hash=pc[0][2], content=pc[0][3])
 
 class FlatFilePersistenceEngine(PersistenceEngine):
 

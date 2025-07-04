@@ -1,9 +1,16 @@
-# environment
-/snooplyze
+# Virtual environment folder
+.venv/
+venv/
 .env
+
+# Persistence things
 /persistence
 
-# Python temp files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# VSCode settings (optional)
+.vscode/
+

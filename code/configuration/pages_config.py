@@ -79,8 +79,7 @@ class PagesConfigLoader:
 
             page = Page(name=page_name,url=page_url)
             #page_monitors.append(PageMonitor(page=page,parser=PARSER_REGISTRY.get(page_parser_type).(**parser_config_variables), persistence=None))
-            page_monitors.append(PageMonitor(page=page,parser=parser_config, persistence=None))
-            #page_monitors.append(page)
+            page_monitors.append(PageMonitor(page=page,parser=parser_config))
         return page_monitors
 
 

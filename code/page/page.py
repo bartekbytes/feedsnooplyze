@@ -7,7 +7,6 @@ from typing import Optional
 
 
 from parser.parser_base import ParserBase
-from persistence.persistence_engine import PersistenceEngine
 
 
 
@@ -16,17 +15,27 @@ class Page:
     name : str
     url : str
 
+@dataclass
+class PageContent:
+    name : str
+    is_new : bool
+    is_update : bool
+    creation_time : str # TODO: make it datetime
+    update_time : str # TODO: make it datetime
+    hash : str
+    content : str
+
 
 @dataclass
 class PageMonitor:
     page: Page = field(default_factory=Page)
     parser: ParserBase = field(default_factory=ParserBase)
-    persistence: PersistenceEngine = field(default_factory=PersistenceEngine)
+    #persistence: PersistenceEngine = field(default_factory=PersistenceEngine)
     timeout: int = 60
     last_hash: Optional[str] = None
     last_content: Optional[str] = None
 
-    def process_content(self):
+    def _get_content(self):
         
         try:
         
@@ -54,92 +63,66 @@ class PageMonitor:
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
 
 
-
-    def check_for_update_new(self) -> bool:
+    def check_for_update(self, latest_persisted_hash: str) -> PageContent:
         
         print(f"🔍 Checking content for {self.page.name} ({self.page.url})")
 
-        content = self.process_content()
+        content = self._get_content()
         
         if content is None:
-            return False
+            return PageContent(name=None, is_new=None, is_update=None, creation_time=None, update_time=None, hash=None, content=None)
         
         current_hash = self._get_content_hash(content)
         
-        if self.last_hash is None:
+        # Case when we have persisted data
+        if latest_persisted_hash:
+
+            if current_hash != latest_persisted_hash:
+                
+                print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {latest_persisted_hash}")
+                self.last_hash = current_hash
+            
+                now = datetime.now()
+                return PageContent(name=self.page.name, is_new=False, is_update=True, update_time=now, hash=self.last_hash, content=self.last_content)
+
+                # TODO: Here will be a super important part - informing about the new content.
+                # Sending info that the new content is available
+                # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc... 
+        
+            elif current_hash == latest_persisted_hash:
+                
+                print("⚠️ No change detected.")
+
+                now = datetime.now()
+                return PageContent(name=self.page.name, is_new=False, is_update=False, creation_time=None, update_time=None, hash=latest_persisted_hash, content=self.last_content)
+
+        elif not latest_persisted_hash and self.last_hash is None:
+
             self.last_hash = current_hash
 
             print(f"✅ Initial content saved, hash: {self.last_hash}")
-
             
             now = datetime.now()
-            #self.persistence.add_content(self.page.name, now, self.last_hash, content)
-
-            return False
+            return PageContent(name=self.page.name, is_new=True, is_update=False, creation_time=now, update_time=None, hash=self.last_hash, content=content)
         
-        if current_hash != self.last_hash:
-            print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
-            self.last_hash = current_hash
+        #if current_hash != self.last_hash:
+            #print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
+            #self.last_hash = current_hash
 
             
-            now = datetime.now()
+            #now = datetime.now()
             #self.persistence.add_content(self.page.name, now, self.last_hash, content)
+            #return PageContent(name=self.page.name, is_new=False, is_update=True, update_time=now, hash=self.last_hash, content=self.last_content)
 
             # TODO: Here will be a super important part - informing about the new content.
             # Sending info that the new content is available
             # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc... 
-            
-            return True
         
-        else:
-            print("⚠️ No change detected.")
+        
+        #else:
+            #print("⚠️ No change detected.")
 
-            now = datetime.now()
+            #now = datetime.now()
             #self.persistence.add_content(self.page.name, now, self.last_hash, None)
-            return False
+            #return PageContent(name=self.page.name, is_new=False, is_update=False, creation_time=None, update_time=None, hash=self.last_hash, content=self.last_content)
 
-
-
-
-    def check_for_update(self):
-        
-        print(f"🔍 Checking content for {self.page.name} ({self.page.url})")
-
-        content = self.process_content()
-        
-        if content is None:
-            return False
-        
-        current_hash = self._get_content_hash(content)
-        
-        if self.last_hash is None:
-            self.last_hash = current_hash
-
-            print(f"✅ Initial content saved, hash: {self.last_hash}")
-
-            
-            now = datetime.now()
-            self.persistence.add_content(self.page.name, now, self.last_hash, content)
-
-            return False
-        
-        if current_hash != self.last_hash:
-            print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
-            self.last_hash = current_hash
-
-            
-            now = datetime.now()
-            self.persistence.add_content(self.page.name, now, self.last_hash, content)
-
-            # TODO: Here will be a super important part - informing about the new content.
-            # Sending info that the new content is available
-            # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc... 
-            
-            return True
-        
-        else:
-            print("⚠️ No change detected.")
-
-            now = datetime.now()
-            self.persistence.add_content(self.page.name, now, self.last_hash, None)
-            return False

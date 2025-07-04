@@ -1,11 +1,6 @@
 from persistence.persistence_engine import *
 from enum import Enum
 
-class PersistenceEngine(Enum):
-    FLAT_FILE = 1
-    DUCK_DB = 2
-    SQLITE = 3
-
 class PersistenceLayerSetup:
     
     def __init__(self, persistence_engine_type : PersistenceEngineType):
@@ -17,7 +12,7 @@ class PersistenceLayerSetup:
 
     def execute_setup(self) -> bool:
     
-        if self.persistence_engine_type == PersistenceEngineType.DUCK_DB:
+        if self.persistence_engine_type == PersistenceEngineType.DUCKDB:
             # add try here
             # duckdb.duckdb.IOException: IO Error: File is already open in
             # duckdb.duckdb.CatalogException: Catalog Error: Table with name "content" already exists! 
@@ -27,7 +22,7 @@ class PersistenceLayerSetup:
             if ddb_connection:
                 print(f"✅ Duck DB connection established")
 
-                result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'").fetchall()
+                result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'Content'").fetchall()
                 print(result)
 
                 if result:
@@ -35,9 +30,9 @@ class PersistenceLayerSetup:
                     print(f"⚠️ Warning this procedure is descructibe!")
                     shall_we_proceed = input("Do you want to proceed? [y/n] ")
                     if shall_we_proceed == 'y':
-                        ddb_connection.execute("DROP TABLE content")
+                        ddb_connection.execute("DROP TABLE Content")
                         ddbpe.create_structure(connection=ddb_connection)
-                        result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'").fetchall()
+                        result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'Content'").fetchall()
                     
                         if result:
                             print(f"✅ Duck DB structure has been created")
@@ -51,7 +46,7 @@ class PersistenceLayerSetup:
                 else:
                     print(f"⚠️ Duck DB does not exist, will be created")
                     ddbpe.create_structure(connection=ddb_connection)
-                    result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'").fetchall()
+                    result = ddb_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'Content'").fetchall()
                     
                     if result:
                         print(f"✅ Duck DB structure has been created")

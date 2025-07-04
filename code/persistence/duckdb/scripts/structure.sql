@@ -1,7 +1,6 @@
-CREATE TABLE content 
+CREATE TABLE Content
 (
-    Id INTEGER,
-    Name VARCHAR,
+    Name VARCHAR(255),
     TimeAdded DATETIME,
     Hash VARCHAR,
     Content VARCHAR
