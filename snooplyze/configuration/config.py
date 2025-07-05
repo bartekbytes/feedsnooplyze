@@ -40,19 +40,19 @@ class DuckDBConfig(PersistenceConfigBase):
     @classmethod
     def validate(cls, data: dict):
         if "db_file_path" not in data:
-            raise ValueError("Missing 'db_file_path' for duckdb persistence")
+            raise ValueError("Missing 'db_file_path' for DuckDB persistence")
 
 
 @dataclass
 @register_persistence
-class PostgresqlConfig(PersistenceConfigBase):
+class PostgreSQLConfig(PersistenceConfigBase):
     persistence: str
     connection_string: str
 
     @classmethod
     def validate(cls, data: dict):
         if "connection_string" not in data:
-            raise ValueError("Missing 'connection_string' for postgresql persistence")
+            raise ValueError("Missing 'connection_string' for PostgreSQL persistence")
         
 
 @dataclass

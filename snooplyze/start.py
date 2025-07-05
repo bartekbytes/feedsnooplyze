@@ -44,14 +44,21 @@ def main():
     cl = ConfigLoader(reader=cr)
     config = cl.load_config()
 
+    print(config)
 
     if args.run_mode == 'setup':
         
         print("🔧 Running setup...")
 
         if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB.name: # TODO: for now only DuckDB engine is supported for setup
+            print("DuckDB")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCKDB)
             pe.set_dbname(config.persistence_config.db_file_path)
+            pe.execute_setup()
+        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL.name:
+            print("Postgresql")
+            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
+            pe.set_connection_string(config.persistence_config.connection_string)
             pe.execute_setup()
         else:
             print(f"{config.persistence_config.persistence} is not supported")
@@ -68,10 +75,13 @@ def main():
         # Create and Connect to Persistence Engine
         persistence_engine = None
         if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB.name: # TODO: for now only DuckDB engine is supported
-            
             from persistence.persistence_engine import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=f"../persistence/{config.persistence_config.db_file_path}")
         
+        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL.name:
+            from persistence.persistence_engine import PostgreSQLPersistenceEngine
+            persistence_engine = PostgreSQLPersistenceEngine(connection_string=config.persistence_config.connection_string)
+
         elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
             pass # Here logic for SQLite            
         
