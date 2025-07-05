@@ -1,4 +1,4 @@
 Config:
   - persistence: duckdb
-    db_file_path: viz3.csv
+    db_file_path: viz.duckdb
   - pool_time: 60

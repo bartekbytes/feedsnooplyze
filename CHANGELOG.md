@@ -2,15 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2025-07-05
+
+### Changes
+
+- Add PostgreSQL as a Persistence Engine `[#6]`
+- Add new library dependence `psycopg[binary]`
+- Add `docker-compose.yml` for PostgreSQL and PgAdmin4
+
 ## [0.1.1] - 2025-07-04
 
 ### Changes
 
-- All code moved from `code` folder to `snooplyze` folder [#3]
+- All code moved from `code` folder to `snooplyze` folder `[#3]`
 
 ### Fixes
 
-- Wrong parameter name used in the code `pool-time`, should be `pooling-time` [#4]
+- Wrong parameter name used in the code `pool-time`, should be `pooling-time` `[#4]`
 
 ## [0.1.0] - 2025-07-04
 
