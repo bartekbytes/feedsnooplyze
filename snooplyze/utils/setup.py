@@ -1,5 +1,3 @@
-from enum import Enum
-
 # import persistence module
 from persistence import *
 
@@ -21,7 +19,7 @@ class PersistenceLayerSetup:
             # add try here
             # duckdb.duckdb.IOException: IO Error: File is already open in
             # duckdb.duckdb.CatalogException: Catalog Error: Table with name "content" already exists! 
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.DUCKDB.name
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.DUCKDB
             pe = DuckDbPersistenceEngine(database=f"../persistence/{self.db_name}")
             pe_connection = pe.connect()
             
@@ -65,7 +63,7 @@ class PersistenceLayerSetup:
                 return False
         
         elif self.persistence_engine_type == PersistenceEngineType.POSTGRESQL:
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL.name
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL
             # add try here
             # duckdb.duckdb.IOException: IO Error: File is already open in
             # duckdb.duckdb.CatalogException: Catalog Error: Table with name "content" already exists! 

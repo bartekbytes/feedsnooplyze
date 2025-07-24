@@ -52,16 +52,23 @@ def main():
         
         print("🔧 Running setup...")
 
-        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB.name: # TODO: for now only DuckDB engine is supported for setup
+        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
             print("DuckDB")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCKDB)
             pe.set_dbname(config.persistence_config.db_file_path)
             pe.execute_setup()
-        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL.name:
-            print("Postgresql")
+        
+        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
+            print("PostgreSQL")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
             pe.set_connection_string(config.persistence_config.connection_string)
             pe.execute_setup()
+        
+        #elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
+        #    print("SQLite")
+        #    print("SQLite still not supported")
+        #    exit(1)
+        
         else:
             print(f"{config.persistence_config.persistence} is not supported")
             exit(1)
@@ -76,16 +83,16 @@ def main():
 
         # Create and Connect to Persistence Engine
         persistence_engine = None
-        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB.name: # TODO: for now only DuckDB engine is supported
+        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
             from persistence import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=f"../persistence/{config.persistence_config.db_file_path}")
         
-        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL.name:
+        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
             from persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=config.persistence_config.connection_string)
 
-        elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
-            pass # Here logic for SQLite            
+        #elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
+        #    pass # Here logic for SQLite            
         
         # Try to connect to Persistence Engine
         if not persistence_engine.connect():

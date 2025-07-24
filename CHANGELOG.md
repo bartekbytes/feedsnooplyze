@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.3] - 2025-07-05
+## [0.1.4] - 2025-07-24
+
+### Changes
+
+- Make `PersistenceEngineType` a string Enum
+- Remove temporary config files and unify configuration into one `config.yaml` file
+  with various Persistence Engine configuration examples
+
+## [0.1.3] - 2025-07-24
 
 ### Changes
 

@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 
-class PersistenceEngineType(Enum):
-    FLATFILE = 1
-    DUCKDB = 2
-    SQLITE = 3
-    POSTGRESQL = 4
+class PersistenceEngineType(str, Enum):
+    FLATFILE = "FLATFILE"
+    DUCKDB = "DUCKDB"
+    SQLITE = "SQLITE"
+    POSTGRESQL = "POSTGRESQL"
 
 
 class PersistenceEngine(ABC):
