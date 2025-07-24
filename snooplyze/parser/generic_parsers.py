@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from typing import Any
 
-from parser.parser_base import ParserBase
+from .base_parser import ParserBase
 from .parser_registry import register_parser_persistence
 
 

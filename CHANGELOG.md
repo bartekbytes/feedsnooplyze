@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2025-07-05
+
+### Changes
+
+- Add refactoring of code, affecting modules `page`, `parser`, `persistence`
+  - Create modules for this code
+  - Split classess from one file into separate files
+  - refactor all relevant files to user these modules directly (no long referencing names)
+
 ## [0.1.2] - 2025-07-05
 
 ### Changes

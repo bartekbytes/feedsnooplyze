@@ -2,9 +2,13 @@ from dataclasses import dataclass
 from typing import List
 import yaml
 
-from page.page import PageMonitor, Page
-from persistence.persistence_engine import *
-from parser.generic_parsers import *
+# import page module
+from page import PageMonitor, Page
+
+# import persistence module
+from persistence import *
+
+# import parser module
 from parser import *
 
 from configuration.config import Config

@@ -1,9 +1,11 @@
 import argparse, sys
 import time
 
-from parser.generic_parsers import *
-from persistence.persistence_engine import PersistenceEngineType
+# import parser module
+from parser import *
 
+# import persistence module
+from persistence import PersistenceEngineType
 
 from configuration.config import ConfigLoader, ConfigReader
 from configuration.pages_config import PagesConfigReader, PagesConfigLoader
@@ -75,11 +77,11 @@ def main():
         # Create and Connect to Persistence Engine
         persistence_engine = None
         if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB.name: # TODO: for now only DuckDB engine is supported
-            from persistence.persistence_engine import DuckDbPersistenceEngine
+            from persistence import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=f"../persistence/{config.persistence_config.db_file_path}")
         
         elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL.name:
-            from persistence.persistence_engine import PostgreSQLPersistenceEngine
+            from persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=config.persistence_config.connection_string)
 
         elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD

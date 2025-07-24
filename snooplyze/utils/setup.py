@@ -1,5 +1,7 @@
-from persistence.persistence_engine import *
 from enum import Enum
+
+# import persistence module
+from persistence import *
 
 class PersistenceLayerSetup:
     

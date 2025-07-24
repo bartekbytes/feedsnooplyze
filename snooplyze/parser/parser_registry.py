@@ -1,4 +1,4 @@
-from .parser_base import ParserBase
+from .base_parser import ParserBase
 
 PARSER_REGISTRY = {}
 
