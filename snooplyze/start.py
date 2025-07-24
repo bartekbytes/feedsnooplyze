@@ -124,14 +124,14 @@ def main():
                         print(f"Content for {page_content.name} exists with latest hash {page_content.hash}")
                     
                         # 2. Check if there is any update since last saved content
-                        pc = pm.check_for_update(latest_persisted_hash=page_content.hash)
+                        pc = pm.check_for_content_update(latest_persisted_hash=page_content.hash)
                     
                         # 3. Add new content to Persistence
                         persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
                 
                     else:
                         print(f"New content for {pm.page.name}")
-                        pc = pm.check_for_update(latest_persisted_hash=None)
+                        pc = pm.check_for_content_update(latest_persisted_hash=None)
                         persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
 
                 time.sleep(args.pooling_time)
@@ -153,14 +153,14 @@ def main():
                     print(f"Content for {page_content.name} exists with latest hash {page_content.hash}")
                     
                     # 2. Check if there is any update since last saved content
-                    pc = pm.check_for_update(latest_persisted_hash=page_content.hash)
+                    pc = pm.check_for_content_update(latest_persisted_hash=page_content.hash)
                     
                     # 3. Add new content to Persistence
                     persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
                 
                 else:
                     print(f"New content for {pm.page.name}")
-                    pc = pm.check_for_update(latest_persisted_hash=None)
+                    pc = pm.check_for_content_update(latest_persisted_hash=None)
                     persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
         
         else:

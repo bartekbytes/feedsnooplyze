@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2025-07-24
+
+### Changes
+
+- First, rough version of **Notification** mechanism:
+  - module `notifier` created
+  - `notifier.py` for **Notifier** class
+  - `console_notifier.py` and `file_notifier.py` for **ConsoleNotifier** and **FileNotifier** classess respectively
+
 ## [0.1.5] - 2025-07-24
 
 ### Changes

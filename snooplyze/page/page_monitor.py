@@ -46,7 +46,7 @@ class PageMonitor:
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
 
 
-    def check_for_update(self, latest_persisted_hash: str) -> PageContent:
+    def check_for_content_update(self, latest_persisted_hash: str) -> PageContent:
         
         print(f"🔍 Checking content for {self.page.name} ({self.page.url})")
 
@@ -70,11 +70,25 @@ class PageMonitor:
 
                 # TODO: Here will be a super important part - informing about the new content.
                 # Sending info that the new content is available
-                # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc... 
+                # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc...
+                 
         
             elif current_hash == latest_persisted_hash:
                 
                 print("⚠️ No change detected.")
+
+                print("NOTIFIER HERE!")
+                from notifier import Notifier, ConsoleNotifier, FileNotifier
+                
+                console_notifier = ConsoleNotifier()
+                file_notifier = FileNotifier()
+            
+                notifier = Notifier()
+                notifier.subscribe(console_notifier.notify)
+                notifier.subscribe(file_notifier.notify)
+
+                notifier.notify(current_hash)
+
 
                 now = datetime.now()
                 return PageContent(name=self.page.name, is_new=False, is_update=False, creation_time=None, update_time=None, hash=latest_persisted_hash, content=self.last_content)
