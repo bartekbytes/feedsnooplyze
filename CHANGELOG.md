@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2025-07-24
+
+### Changes
+
+- Make `utils` a module
+- Add `ContentComparer` insite `utils` module class that consists a logic of comparison two strings
+  and returns only added elements in the newer string
+
 ## [0.1.4] - 2025-07-24
 
 ### Changes

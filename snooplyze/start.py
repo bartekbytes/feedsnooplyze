@@ -10,7 +10,7 @@ from persistence import PersistenceEngineType
 from configuration.config import ConfigLoader, ConfigReader
 from configuration.pages_config import PagesConfigReader, PagesConfigLoader
 
-from utils.setup import PersistenceLayerSetup
+from utils import PersistenceLayerSetup
 
 
 def main():
