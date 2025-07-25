@@ -6,7 +6,7 @@ from page import PageContent
 
 class PostgreSQLPersistenceEngine(PersistenceEngine):
 
-    def __init__(self, connection_string : str):
+    def __init__(self, connection_string: str):
         self.connection_string = connection_string
         self.connection = None
 
@@ -39,18 +39,23 @@ class PostgreSQLPersistenceEngine(PersistenceEngine):
         else:
             return None
             
-    def add_content(self, name : str, time_added : str, hash : str, content : str):
+    def add_content(self, name: str, time_added: str, hash: str, content: str):
         self.connection.execute("INSERT INTO content (name, timeadded, hash, content) VALUES (%s, %s, %s, %s)", (name, time_added, hash, content))
         self.connection.commit()
 
-    def is_content_available(self, name : str) -> bool:
+    def is_content_available(self, name: str) -> bool:
         sql = f"SELECT 1 FROM content WHERE name = '{name}' ORDER BY timeadded DESC"
         if len(self.connection.execute(sql).fetchall()) > 0:
             return True
         else: 
             return False
 
-    def get_latest_by_name(self, name : str) -> PageContent:
+    def get_latest_by_name(self, name: str) -> PageContent:
         sql = f"SELECT name, timeadded, hash, content FROM content WHERE name = '{name}' ORDER BY timeadded DESC LIMIT 1"
+        pc = self.connection.execute(sql).fetchall()
+        return PageContent(name=pc[0][0], is_new=None, is_update=None, creation_time=pc[0][1], update_time=None, hash=pc[0][2], content=pc[0][3])
+    
+    def get_latest_by_name_with_content(self, name: str) -> PageContent:
+        sql = f"SELECT name, timeadded, hash, content FROM content WHERE name = '{name}' AND content is NOT NULL ORDER BY timeadded DESC LIMIT 1"
         pc = self.connection.execute(sql).fetchall()
         return PageContent(name=pc[0][0], is_new=None, is_update=None, creation_time=pc[0][1], update_time=None, hash=pc[0][2], content=pc[0][3])

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.7] - 2025-07-25
+
+### Changes
+
+- New Configuration mechanism:
+  - Splitting into 3 parts: `GeneralConfig`, `PersistenceConfig`, `NotificationConfig`
+
 ## [0.1.6] - 2025-07-24
 
 ### Changes

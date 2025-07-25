@@ -4,26 +4,26 @@ from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .page import Page
-from .page_content import PageContent
+# snooplyze modules
+from page import Page, PageContent
 from parser import ParserBase
+from utils import ContentComparer
 
 
 @dataclass
 class PageMonitor:
     page: Page = field(default_factory=Page)
     parser: ParserBase = field(default_factory=ParserBase)
-    #persistence: PersistenceEngine = field(default_factory=PersistenceEngine)
-    timeout: int = 60
     last_hash: Optional[str] = None
     last_content: Optional[str] = None
+
 
     def _get_content(self):
         
         try:
         
             print(f"🚀 Request has been sent")
-            response = requests.get(self.page.url, timeout = self.timeout)
+            response = requests.get(self.page.url, timeout = 60)
             response.raise_for_status()
             
             content = self.parser.parse(response.text)
@@ -62,11 +62,28 @@ class PageMonitor:
 
             if current_hash != latest_persisted_hash:
                 
-                print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {latest_persisted_hash}")
+                print(f"✅ Content has changed, current hash: {current_hash}, last hash: {latest_persisted_hash}")
                 self.last_hash = current_hash
+
+                cp = ContentComparer(new_string=content, old_string=self.last_content)
+
+
+                print("NOTIFIER HERE!")
+                from notifier import Notifier, ConsoleNotifier, FileNotifier
+                
+                console_notifier = ConsoleNotifier()
+                file_notifier = FileNotifier()
+            
+                notifier = Notifier()
+                notifier.subscribe(console_notifier.notify)
+                notifier.subscribe(file_notifier.notify)
+
+                notifier.notify(current_hash)
+
+
             
                 now = datetime.now()
-                return PageContent(name=self.page.name, is_new=False, is_update=True, update_time=now, hash=self.last_hash, content=self.last_content)
+                return PageContent(name=self.page.name, is_new=False, is_update=True, creation_time=None, update_time=now, hash=self.last_hash, content=self.last_content)
 
                 # TODO: Here will be a super important part - informing about the new content.
                 # Sending info that the new content is available

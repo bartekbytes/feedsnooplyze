@@ -1,15 +1,11 @@
 import argparse, sys
 import time
 
-# import parser module
+# import snooplyze modules
 from parser import *
-
-# import persistence module
 from persistence import PersistenceEngineType
-
 from configuration.config import ConfigLoader, ConfigReader
 from configuration.pages_config import PagesConfigReader, PagesConfigLoader
-
 from utils import PersistenceLayerSetup
 
 
@@ -44,33 +40,36 @@ def main():
     # Read app config file
     cr = ConfigReader(r"../config.yaml") # expecting a config file here with this name
     cl = ConfigLoader(reader=cr)
-    config = cl.load_config()
+    general_config, persistence_config, notifications_config = cl.load_config()
 
-    print(config)
+    print(general_config)
+    print(persistence_config)
+    for n in notifications_config:
+        print(n)
 
     if args.run_mode == 'setup':
         
         print("🔧 Running setup...")
 
-        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
+        if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
             print("DuckDB")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCKDB)
-            pe.set_dbname(config.persistence_config.db_file_path)
+            pe.set_dbname(persistence_config.db_file_path)
             pe.execute_setup()
         
-        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
+        elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
             print("PostgreSQL")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
-            pe.set_connection_string(config.persistence_config.connection_string)
+            pe.set_connection_string(persistence_config.connection_string)
             pe.execute_setup()
         
-        #elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
+        #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
         #    print("SQLite")
         #    print("SQLite still not supported")
         #    exit(1)
         
         else:
-            print(f"{config.persistence_config.persistence} is not supported")
+            print(f"{persistence_config.persistence} is not supported")
             exit(1)
 
     elif args.run_mode == 'fetch':
@@ -83,15 +82,16 @@ def main():
 
         # Create and Connect to Persistence Engine
         persistence_engine = None
-        if config.persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            from persistence import DuckDbPersistenceEngine
-            persistence_engine = DuckDbPersistenceEngine(database=f"../persistence/{config.persistence_config.db_file_path}")
-        
-        elif config.persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            from persistence import PostgreSQLPersistenceEngine
-            persistence_engine = PostgreSQLPersistenceEngine(connection_string=config.persistence_config.connection_string)
 
-        #elif config.persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
+        if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
+            from persistence import DuckDbPersistenceEngine
+            persistence_engine = DuckDbPersistenceEngine(database=persistence_config.db_file_path)
+        
+        elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
+            from persistence import PostgreSQLPersistenceEngine
+            persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)
+
+        #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
         #    pass # Here logic for SQLite            
         
         # Try to connect to Persistence Engine
@@ -150,7 +150,11 @@ def main():
                 if content_available:
                     page_content = persistence_engine.get_latest_by_name(name=pm.page.name)
                     print("----------------------")
-                    print(f"Content for {page_content.name} exists with latest hash {page_content.hash}")
+                    print(f"Content for {page_content.name} exists with hash {page_content.hash}")
+
+                    page_content_with_content = persistence_engine.get_latest_by_name_with_content(name=pm.page.name)
+                    print("----------------------")
+                    print(f"Content for {page_content_with_content.name} exists with hash {page_content_with_content.hash}")
                     
                     # 2. Check if there is any update since last saved content
                     pc = pm.check_for_content_update(latest_persisted_hash=page_content.hash)

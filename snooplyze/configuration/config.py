@@ -1,83 +1,68 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Optional
 import yaml
 
+from persistence import PersistenceEngineType
 
+
+### General Config Classess
+
+@dataclass
+class GeneralConfig:
+    pool_time: Optional[int] = 3600 # 1 hour
+    author: Optional[str] = "snooplyze"
+
+
+
+### Persistence Config Classess
+
+@dataclass
 class PersistenceConfigBase(ABC):
     persistence: str
 
-    @classmethod
-    @abstractmethod
-    def validate(cls, data: dict) -> None:
-        pass
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        cls.validate(data)
-        return cls(**data)
-
-
-PERSISTENCE_REGISTRY: dict[str, type[PersistenceConfigBase]] = {}
-
-def register_persistence(cls: type[PersistenceConfigBase]):
-    
-    if not hasattr(cls, '__name__'):
-        raise TypeError(f"Expected a class, got {type(cls).__name__}")
-    
-    key = cls.__name__.replace("Config", "").lower()
-    PERSISTENCE_REGISTRY[key] = cls
-    return cls
-
-
-
 @dataclass
-@register_persistence
 class DuckDBConfig(PersistenceConfigBase):
     persistence: str
     db_file_path: str
 
-    @classmethod
-    def validate(cls, data: dict):
-        if "db_file_path" not in data:
-            raise ValueError("Missing 'db_file_path' for DuckDB persistence")
-
-
 @dataclass
-@register_persistence
 class PostgreSQLConfig(PersistenceConfigBase):
     persistence: str
     connection_string: str
 
-    @classmethod
-    def validate(cls, data: dict):
-        if "connection_string" not in data:
-            raise ValueError("Missing 'connection_string' for PostgreSQL persistence")
-        
-
 @dataclass
-@register_persistence
 class MSSQLConfig(PersistenceConfigBase):
     persistence: str
     connection_string: str
     database_name: str
 
-    @classmethod
-    def validate(cls, data: dict):
-        missing = [f for f in ("connection_string", "database_name") if f not in data]
-        if missing:
-            raise ValueError(f"Missing fields for mssql persistence: {', '.join(missing)}")
 
+
+# Notification Config Classess
+@dataclass
+class NotificationConfigBase(ABC):
+    pass
 
 @dataclass
-class GeneralConfig:
-    pool_time: Optional[int] = 3600 # 1 hour
-
+class ConsoleNotification(NotificationConfigBase):
+    pass
 
 @dataclass
-class Config:
-    persistence_config: PersistenceConfigBase
-    general_config: GeneralConfig
+class FlatFileNotification(NotificationConfigBase):
+    file_path: str
+
+@dataclass
+class EmailNotification(NotificationConfigBase):
+    email_address: str
+    subject: Optional[str] = None
+
+@dataclass
+class SMSNotification(NotificationConfigBase):
+    phone_number: str
+    provider: Optional[str] = None
+
+
 
 @dataclass
 class ConfigReader:
@@ -93,33 +78,59 @@ class ConfigLoader:
         self.reader = reader
 
 
-    def load_config(self) -> Config:
+    def load_config(self):
         yaml_str = self.reader.read()
-        return self.parse_config(yaml_str)
+        return self._parse_config(yaml_str)
+    
+
+    def _create_persistence_config(self, data: dict) -> PersistenceConfigBase:
+        type_ = data.get("persistence").upper()
+        
+        if type_ == PersistenceEngineType.POSTGRESQL:
+            return PostgreSQLConfig(persistence=PersistenceEngineType.POSTGRESQL, connection_string=data["connection_string"])
+        elif type_ == PersistenceEngineType.DUCKDB:
+            return DuckDBConfig(persistence=PersistenceEngineType.DUCKDB, db_file_path=data["db_file_path"])
+        elif type_ == PersistenceEngineType.MSSQLSERVER:
+            return MSSQLConfig(
+                persistence=PersistenceEngineType.MSSQLSERVER,
+                connection_string=data["connection_string"],
+                db_name=data["db_name"]
+            )
+        else:
+            raise ValueError(f"Unsupported persistence type: {type_.upper()}")
 
 
-    def parse_config(self, yaml_str: str) -> Config:
+    def _create_notification_config(self, data: dict) -> NotificationConfigBase:
+        type_ = data.get("notification_type")
+        if type_ == "console":
+            return ConsoleNotification()
+        elif type_ == "flatfile":
+            return FlatFileNotification(file_path=data["file_path"])
+        elif type_ == "email":
+            return EmailNotification(
+                email_address=data["email_address"],
+                subject=data.get("subject")
+            )
+        elif type_ == "sms":
+            return SMSNotification(
+                phone_number=data["phone_number"],
+                provider=data.get("provider")
+            )
+        else:
+            raise ValueError(f"Unsupported notification type: {type_.upper()}")
+    
+
+    def _parse_config(self, yaml_str: str):
         data = yaml.safe_load(yaml_str)
-        config_list = data.get("Config", [])
-    
-        persistence_config = None
-        general_config = GeneralConfig()
-    
-        for item in config_list:
-            
-            if "persistence" in item:
-                p = item["persistence"].lower()
-                cls = PERSISTENCE_REGISTRY.get(p)
-                if not cls:
-                    raise ValueError(f"Unknown persistence type: {p}")
-                persistence_config = cls.from_dict(item)
-            
-            elif "pool_time" in item:
-                general_config.pool_time = item["pool_time"]
+        
+        # General config
+        general = GeneralConfig(pool_time=data["GeneralConfig"]["pool_time"], author=data["GeneralConfig"]["author"])
 
-        if persistence_config is None:
-            raise ValueError("No persistence configuration found")
+        # Persistence config
+        persistence = self._create_persistence_config(data["PersistenceConfig"])
 
-        return Config(persistence_config=persistence_config, general_config=general_config)
+        # Notification configs
+        notifications = [self._create_notification_config(n) for n in data.get("NotificationConfig", [])]
 
+        return general, persistence, notifications
     

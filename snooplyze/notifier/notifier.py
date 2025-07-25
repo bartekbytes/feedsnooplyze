@@ -1,3 +1,12 @@
+from enum import Enum
+
+class NotifierType(str, Enum):
+    CONSOLE = "CONSOLE"
+    FLATFILE = "FLATFILE"
+    EMAIL = "EMAIL"
+    SMS = "SMS"
+
+
 class Notifier:
     def __init__(self):
         self.subscribers = []

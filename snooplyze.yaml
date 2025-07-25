@@ -1,6 +1,7 @@
 Pages:
   - name: "Duck DB"
     url: "https://duckdb.org/news/"
+    description: "Duck DB News Page"
     parser:
       - type: "divclass"
         class_name: "newstiles"

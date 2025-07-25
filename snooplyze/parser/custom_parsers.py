@@ -2,10 +2,8 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from .base_parser import ParserBase
-from .parser_registry import register_parser_persistence
 
 
-@register_parser_persistence
 class DuckDbBlogParser(ParserBase):
     """
     Extracts the content of Duck DB blog
@@ -24,7 +22,6 @@ class DuckDbBlogParser(ParserBase):
         else:
             return None
         
-@register_parser_persistence
 class MicrosoftAzureVirtualMachinesBlogParser(ParserBase):
 
     def __init__(self):
@@ -40,7 +37,6 @@ class MicrosoftAzureVirtualMachinesBlogParser(ParserBase):
         else:
             return None
 
-@register_parser_persistence
 class MicrosoftAzureAzureSQLDatabaseBlogParser(ParserBase):
     
     def __init__(self):

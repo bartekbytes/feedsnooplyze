@@ -1,18 +1,25 @@
 # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
-Config:
-  - persistence: postgresql
-    connection_string: "dbname=snooplyze user=postgres password=postgresql host=127.0.0.1 port=5432"
-  - pool_time: 60
+GeneralConfig:
+  pool_time: 60
+  author: "vizaard"
+
+PersistenceConfig:
+  # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
+  persistence: postgresql
+  connection_string: "dbname=snooplyze user=postgres password=postgresql host=127.0.0.1 port=5432"
+
 # This is confing for DuckDB - Uncomment if you want to use this Persistence Engine
-#Config:
-#  - persistence: duckdb
-#    db_file_path: viz.duckdb
-#  - pool_time: 60
+#  persistence: duckdb
+#  db_file_path: C:\code\vizaard.duckdb
 
 # This is confing for Microsoft SQL Server - Uncomment if you want to use this Persistence Engine
 # WARNING - this hasn't been implemented yet!
-#Config:
-#  - persistence: mssql
-#    connection_string: MYSQLSUPERINSTANCE
-#    database_name: vizdb
-#  - pool_time: 120
+#  persistence: mssql
+#  connection_string: MYSQLSUPERINSTANCE
+#  database_name: vizdb
+
+NotificationConfig:
+  - notification_type: console
+  - notification_type: email
+    email_address: adad@wp.pl
+    subject: "alter"
