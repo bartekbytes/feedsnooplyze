@@ -62,6 +62,16 @@ def main():
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
             pe.set_connection_string(persistence_config.connection_string)
             pe.execute_setup()
+
+        elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
+            print("MySQL")
+            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.MYSQL)
+            pe.set_host(persistence_config.host)
+            pe.set_port(persistence_config.port)
+            pe.set_user(persistence_config.user)
+            pe.set_password(persistence_config.password)
+            pe.set_database(persistence_config.database)
+            pe.execute_setup()
         
         #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
         #    print("SQLite")
@@ -90,6 +100,15 @@ def main():
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
             from persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)
+
+        elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
+            from persistence import MySQLPersistenceEngine
+            persistence_engine = MySQLPersistenceEngine(
+                host=persistence_config.host,
+                port=persistence_config.port,
+                user=persistence_config.user,
+                password=persistence_config.password,
+                database=persistence_config.database)
 
         #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
         #    pass # Here logic for SQLite            

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.8] - 2025-07-25
+
+### Changes
+
+- Add **MySQL** as a Persistence Engine
+  - All relevant classess and logic
+  - SQL scripts for creating structure
+  - `docker-compose.yml` file for MySQL
+
 ## [0.1.7] - 2025-07-25
 
 ### Changes

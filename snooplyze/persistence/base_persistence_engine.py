@@ -7,6 +7,7 @@ class PersistenceEngineType(str, Enum):
     SQLITE = "SQLITE"
     POSTGRESQL = "POSTGRESQL"
     MSSQLSERVER = "MSSQLSERVER"
+    MYSQL = "MYSQL"
 
 
 class PersistenceEngine(ABC):

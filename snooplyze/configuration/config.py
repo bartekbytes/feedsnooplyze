@@ -37,6 +37,15 @@ class MSSQLConfig(PersistenceConfigBase):
     connection_string: str
     database_name: str
 
+@dataclass
+class MySQLConfig(PersistenceConfigBase):
+    persistence: str
+    host: str
+    port: str
+    user: str
+    password: str
+    database: str
+
 
 
 # Notification Config Classess
@@ -90,6 +99,14 @@ class ConfigLoader:
             return PostgreSQLConfig(persistence=PersistenceEngineType.POSTGRESQL, connection_string=data["connection_string"])
         elif type_ == PersistenceEngineType.DUCKDB:
             return DuckDBConfig(persistence=PersistenceEngineType.DUCKDB, db_file_path=data["db_file_path"])
+        elif type_ == PersistenceEngineType.MYSQL:
+            return MySQLConfig(persistence=PersistenceEngineType.MYSQL, 
+                                host=data["host"],
+                                port=data["port"],
+                                user=data["user"],
+                                password=data["password"],
+                                database=data["database"]
+                               )
         elif type_ == PersistenceEngineType.MSSQLSERVER:
             return MSSQLConfig(
                 persistence=PersistenceEngineType.MSSQLSERVER,

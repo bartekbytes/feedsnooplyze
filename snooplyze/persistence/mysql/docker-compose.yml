@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  # MySQL database
+  mysql_db:
+    image: mysql
+    container_name: mysql-db
+    restart: always
+    ports:
+      - "3306:3306" # Default MySQL port
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    volumes:
+      - mysql_db_data:/var/lib/mysql # Docker managed volume
+
+  # Simple Web UI for MySQL
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080 # Expose Web UI to port 8080
+
+volumes:
+  mysql_db_data:

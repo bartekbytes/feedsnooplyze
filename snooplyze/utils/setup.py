@@ -12,6 +12,21 @@ class PersistenceLayerSetup:
     def set_connection_string(self, connection_string: str) -> None:
         self.set_connection_string = connection_string
 
+    def set_host(self, host: str) -> None:
+        self.host = host
+
+    def set_port(self, port: str) -> None:
+        self.port = port
+
+    def set_user(self, user: str) -> None:
+        self.user = user
+
+    def set_password(self, password: str) -> None:
+        self.password = password
+
+    def set_database(self, database: str) -> None:
+        self.database = database
+        
 
     def execute_setup(self) -> bool:
     
@@ -110,6 +125,59 @@ class PersistenceLayerSetup:
                  print(f"❌ {PERSISTENCE_ENGINE_NAME} connection failed")
                  return False
 
+
+        elif self.persistence_engine_type == PersistenceEngineType.MYSQL:
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.MYSQL
+            # add try here 
+            from persistence import MySQLPersistenceEngine
+            pe = MySQLPersistenceEngine(
+                host=self.host,
+                port=self.port,
+                user=self.user,
+                password=self.password,
+                database=self.database)
+            pe_connection = pe.connect()
+            print(pe_connection)
+            
+            if pe_connection:
+                print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
+                cursor = pe_connection.cursor()
+
+                result = cursor.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'")
+                result = cursor.fetchall()
+                print(result)
+
+                if result:
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
+                    print(f"⚠️ Warning this procedure is descructibe!")
+                    shall_we_proceed = input("Do you want to proceed? [y/n] ")
+                    if shall_we_proceed == 'y':
+                        cursor.execute("DROP TABLE content")
+                        result = pe.create_structure(connection=pe_connection)
+
+                        if result:
+                            print(f"✅ {PERSISTENCE_ENGINE_NAME} structure has been created")
+                            return True
+                        else:
+                            print(f"❌ {PERSISTENCE_ENGINE_NAME} structure has not been created")
+                            return False
+                    else:
+                        print(f"⚠️ Set-up aborted.")
+                
+                else:
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} does not exist, will be created")
+                    result = pe.create_structure(connection=pe_connection)
+                    
+                    if result:
+                        print(f"✅ {PERSISTENCE_ENGINE_NAME} structure has been created")
+                        return True
+                    else:
+                        print(f"❌ {PERSISTENCE_ENGINE_NAME} structure has not been created")
+                        return False
+                    
+            else:
+                 print(f"❌ {PERSISTENCE_ENGINE_NAME} connection failed")
+                 return False
 
         else:
             return False
