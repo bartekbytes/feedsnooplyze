@@ -79,6 +79,52 @@ class PersistenceLayerSetup:
                 return False
         
 
+        if self.persistence_engine_type == PersistenceEngineType.SQLITE:
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.SQLITE
+            from persistence import SQLitePersistenceEngine
+            pe = SQLitePersistenceEngine(database=self.db_name)
+            pe_connection = pe.connect()
+            
+            if pe_connection:
+                print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
+
+                result = pe_connection.execute("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'content'").fetchall()
+                print(result)
+
+                if result:
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
+                    print(f"⚠️ Warning this procedure is descructibe!")
+                    shall_we_proceed = input("Do you want to proceed? [y/n] ")
+                    if shall_we_proceed == 'y':
+                        pe_connection.execute("DROP TABLE Content")
+                        result = pe.create_structure(connection=pe_connection)
+                    
+                        if result:
+                            print(f"✅ {PERSISTENCE_ENGINE_NAME} structure has been created")
+                            return True
+                        else:
+                            print(f"❌ {PERSISTENCE_ENGINE_NAME} structure has not been created")
+                            return False
+                    else:
+                        print(f"⚠️ Set-up aborted.")
+                
+                else:
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} does not exist, will be created")
+                    result = pe.create_structure(connection=pe_connection)
+
+                    
+                    if result:
+                        print(f"✅ {PERSISTENCE_ENGINE_NAME} structure has been created")
+                        return True
+                    else:
+                        print(f"❌ {PERSISTENCE_ENGINE_NAME} structure has not been created")
+                        return False
+                    
+            else:
+                print(f"❌ {PERSISTENCE_ENGINE_NAME} connection failed")
+                return False
+
+
         elif self.persistence_engine_type == PersistenceEngineType.POSTGRESQL:
             PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL
             # add try here 

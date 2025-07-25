@@ -57,6 +57,12 @@ def main():
             pe.set_dbname(persistence_config.db_file_path)
             pe.execute_setup()
         
+        elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
+            print("SQLite")
+            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.SQLITE)
+            pe.set_dbname(persistence_config.db_file_path)
+            pe.execute_setup()
+
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
             print("PostgreSQL")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
@@ -97,6 +103,10 @@ def main():
             from persistence import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=persistence_config.db_file_path)
         
+        elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
+            from persistence import SQLitePersistenceEngine
+            persistence_engine = SQLitePersistenceEngine(database=persistence_config.db_file_path)
+
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
             from persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)

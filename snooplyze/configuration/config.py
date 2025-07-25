@@ -27,6 +27,11 @@ class DuckDBConfig(PersistenceConfigBase):
     db_file_path: str
 
 @dataclass
+class SQLiteConfig(PersistenceConfigBase):
+    persistence: str
+    db_file_path: str
+
+@dataclass
 class PostgreSQLConfig(PersistenceConfigBase):
     persistence: str
     connection_string: str
@@ -99,6 +104,8 @@ class ConfigLoader:
             return PostgreSQLConfig(persistence=PersistenceEngineType.POSTGRESQL, connection_string=data["connection_string"])
         elif type_ == PersistenceEngineType.DUCKDB:
             return DuckDBConfig(persistence=PersistenceEngineType.DUCKDB, db_file_path=data["db_file_path"])
+        elif type_ == PersistenceEngineType.SQLITE:
+            return SQLiteConfig(persistence=PersistenceEngineType.SQLITE, db_file_path=data["db_file_path"])
         elif type_ == PersistenceEngineType.MYSQL:
             return MySQLConfig(persistence=PersistenceEngineType.MYSQL, 
                                 host=data["host"],

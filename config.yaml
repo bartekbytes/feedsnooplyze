@@ -12,6 +12,10 @@ PersistenceConfig:
   #persistence: duckdb
   #db_file_path: C:\code\vizaard.duckdb
 
+  # This is confing for SQLite - Uncomment if you want to use this Persistence Engine
+  #persistence: sqlite
+  #db_file_path: C:\code\vizaard_sqlite.db
+
   # This is confing for MySQL - Uncomment if you want to use this Persistence Engine
   #persistence: mysql
   #host: 127.0.0.1
