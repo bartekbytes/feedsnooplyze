@@ -1,11 +1,10 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 @dataclass
 class PageContent:
-    name : str
-    is_new : bool
-    is_update : bool
-    creation_time : str # TODO: make it datetime
-    update_time : str # TODO: make it datetime
-    hash : str
-    content : str
+    page_name: str
+    content_time: str
+    content_hash: str
+    full_content: str
+    added_content: str
+

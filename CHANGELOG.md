@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.10] - 2025-07-25
+
+### Changes
+
+- Refactoring all Persistence Engines to comply with a new structure of the data
+
 ## [0.1.9] - 2025-07-25
 
 ### Changes

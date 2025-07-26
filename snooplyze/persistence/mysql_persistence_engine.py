@@ -26,7 +26,7 @@ class MySQLPersistenceEngine(PersistenceEngine):
             
             time.sleep(10) # give some time to the engine to create the structure
 
-            cursor.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'")
+            cursor.execute("SELECT * FROM information_schema.tables WHERE table_name = 'PageContent'")
             result = cursor.fetchall()
 
             if result:
@@ -51,16 +51,16 @@ class MySQLPersistenceEngine(PersistenceEngine):
         else:
             return None
             
-    def add_content(self, name: str, time_added: str, hash: str, content: str):
+    def add_content(self, page_name: str, content_time: str, content_hash: str, full_content: str, added_content: str):
         cursor = self.connection.cursor()
-        cursor.execute("INSERT INTO content (name, timeadded, hash, content) VALUES (%s, %s, %s, %s)", (name, time_added, hash, content))
+        cursor.execute("INSERT INTO PageContent (PageName, ContentTime, ContentHash, FullContent, AddedContent) VALUES (%s, %s, %s, %s, %s)", (page_name, content_time, content_hash, full_content, added_content))
         self.connection.commit()
         cursor.close()
 
 
-    def is_content_available(self, name: str) -> bool:
+    def is_content_available(self, page_name: str) -> bool:
         cursor = self.connection.cursor()
-        sql = f"SELECT 1 FROM content WHERE name = '{name}' ORDER BY timeadded DESC"
+        sql = f"SELECT 1 FROM PageContent WHERE PageName = '{page_name}' ORDER BY ContentTime DESC"
         cursor.execute(sql)
         if len(cursor.fetchall()) > 0:
             cursor.close()
@@ -70,21 +70,10 @@ class MySQLPersistenceEngine(PersistenceEngine):
             return False
 
 
-    def get_latest_by_name(self, name: str) -> PageContent:
+    def get_latest_by_name(self, page_name: str) -> PageContent:
         cursor = self.connection.cursor()
-        sql = f"SELECT name, timeadded, hash, content FROM content WHERE name = '{name}' ORDER BY timeadded DESC LIMIT 1"
+        sql = f"SELECT PageName, ContentTime, ContentHash, FullContent, AddedContent FROM PageContent WHERE PageName = '{page_name}' ORDER BY ContentTime DESC LIMIT 1"
         cursor.execute(sql)
         pc = cursor.fetchall()
-        cursor.close()
-        
-        return PageContent(name=pc[0][0], is_new=None, is_update=None, creation_time=pc[0][1], update_time=None, hash=pc[0][2], content=pc[0][3])
-    
-
-    def get_latest_by_name_with_content(self, name: str) -> PageContent:
-        cursor = self.connection.cursor()
-        sql = f"SELECT name, timeadded, hash, content FROM content WHERE name = '{name}' AND content is NOT NULL ORDER BY timeadded DESC LIMIT 1"
-        cursor.execute(sql)
-        pc = cursor.fetchall()
-        cursor.close()
-        
-        return PageContent(name=pc[0][0], is_new=None, is_update=None, creation_time=pc[0][1], update_time=None, hash=pc[0][2], content=pc[0][3])
+        cursor.close()        
+        return PageContent(page_name=pc[0][0], content_time=pc[0][1], content_hash=pc[0][2], full_content=pc[0][3], added_content=pc[0][4])

@@ -14,7 +14,7 @@ PersistenceConfig:
 
   # This is confing for SQLite - Uncomment if you want to use this Persistence Engine
   #persistence: sqlite
-  #db_file_path: C:\code\vizaard_sqlite.db
+  #db_file_path: C:\code\vizaard.sqlite
 
   # This is confing for MySQL - Uncomment if you want to use this Persistence Engine
   #persistence: mysql
