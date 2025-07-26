@@ -10,7 +10,7 @@ from persistence import PersistenceEngineType
 
 @dataclass
 class GeneralConfig:
-    pool_time: Optional[int] = 3600 # 1 hour
+    pooling_time: int
     author: Optional[str] = "snooplyze"
 
 
@@ -148,7 +148,7 @@ class ConfigLoader:
         data = yaml.safe_load(yaml_str)
         
         # General config
-        general = GeneralConfig(pool_time=data["GeneralConfig"]["pool_time"], author=data["GeneralConfig"]["author"])
+        general = GeneralConfig(pooling_time=data["GeneralConfig"]["pooling_time"], author=data["GeneralConfig"]["author"])
 
         # Persistence config
         persistence = self._create_persistence_config(data["PersistenceConfig"])

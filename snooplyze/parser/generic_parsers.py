@@ -52,9 +52,6 @@ class DivClassParser(ParserBase):
     class_name: str
 
     def parse(self, text_to_parse) -> Any | None:
-        print("INSIDE")
-        print(self.class_name)
-        #print(text_to_parse)
 
         soup = BeautifulSoup(text_to_parse, 'html.parser')
         content = soup.find('div', class_ = self.class_name)

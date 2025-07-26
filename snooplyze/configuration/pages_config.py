@@ -43,8 +43,6 @@ class PagesConfigLoader:
 
             if "parser" in item:
                 page_parser_type = page_parser[0].get('type').lower()
-                
-                print(f"Class of parser {page_parser_type}") # TODO: to delete
 
                 from parser import ParserType
 

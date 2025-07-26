@@ -33,17 +33,15 @@ def main():
     if args.run_mode == 'fetch' and args.fetch_type is None:
         parser.error("When run-mode is 'fetch', fetch-type must be provided")
 
-    if args.run_mode == 'fetch' and args.fetch_type == 'interactive' and args.pooling_time is None:
-        parser.error("When run-mode is 'fetch' and fetch-type is 'interactive' then pooling-time must be provided")
-
-
     # Read app config file
     cr = ConfigReader(r"../config.yaml") # expecting a config file here with this name
     cl = ConfigLoader(reader=cr)
-    general_config, persistence_config, notifications_config = cl.load_config()
+    general_config, persistence_config, notifications_config = cl.load_config() # Get all 3 types of Config: general, persistence and notifications
 
-    print(general_config)
-    print(persistence_config)
+    print("⚙️ Config loaded:")
+    print(f"General Config: {general_config}")
+    print(f"Persistence Config: {persistence_config}")
+    print(f"Notifications Config:")
     for n in notifications_config:
         print(n)
 
@@ -79,9 +77,8 @@ def main():
             pe.set_database(persistence_config.database)
             pe.execute_setup()
     
-        
         else:
-            print(f"{persistence_config.persistence} is not supported")
+            print(f"❌ {persistence_config.persistence} is not supported")
             exit(1)
 
     elif args.run_mode == 'fetch':
@@ -90,7 +87,6 @@ def main():
         pcr = PagesConfigReader(args.config_file)
         pcl = PagesConfigLoader(reader=pcr)
         pages_monitors = pcl.load_config() # parse and load config, return a list of PageMonitor
-
 
         # Create and Connect to Persistence Engine
         persistence_engine = None
@@ -115,13 +111,10 @@ def main():
                 user=persistence_config.user,
                 password=persistence_config.password,
                 database=persistence_config.database)
-
-        #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
-        #    pass # Here logic for SQLite            
         
         # Try to connect to Persistence Engine
         if not persistence_engine.connect():
-            print("Can't connect to Persistence Engine!")
+            print("❌ Can't connect to Persistence Engine!")
             exit(1)
 
         
@@ -129,13 +122,24 @@ def main():
         # Main logic of the app
         #############################
         
-        # Mode how app works, interactive or oneshot
+        loop_counter: int = 1
+        pooling_time = None
+        
+        # If running mode is 'interactive' then pooling_time must be setup.
+        # pooling_time from command-line arguments takes precedence over pooling_time from the configuration file.
         if args.fetch_type == 'interactive':
+            pooling_time = args.pooling_time if args.pooling_time else general_config.pooling_time
+            print(f"Pooling time set to: {pooling_time}")
+
+        # Mode how app works, interactive or oneshot
+        if args.fetch_type == 'interactive' or args.fetch_type == 'oneshot':
             
             while True:
-                print("📥 Fetching data (interactive)...")
-
-
+                
+                
+                print("\n------------------")
+                print(f"- 📥 Fetching data ({args.fetch_type} mode)... Loop counter: {loop_counter}")
+                print("-------------------\n")
 
                 # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:
@@ -143,17 +147,15 @@ def main():
                     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
                     content_available = persistence_engine.is_content_available(page_name=pm.page.name)
 
-                    print(f"Is content available? {content_available}")
-
                     if content_available:
-                        page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
-                        print("----------------------")
-                        print(f"Content for {page_content.page_name} exists with hash {page_content.content_hash}")
 
-                        # 2. Check if there is any update since last saved content
+                        # Get the latest PageContent (ordered by ContentTime) for a given Page
+                        page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
+
+                        # 2. Check if there is any content change since the last saved content
                         pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
                     
-                        # New content detected
+                        # If a new content detected, add it to the Persisitence Layer
                         if pc.page_name:
                     
                             # 3. Add new content to Persistence
@@ -161,48 +163,23 @@ def main():
                                                         content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
                     else:
-                        print(f"New content for {pm.page.name}")
+                        # There is no content stored in Persistence Layer for a given Page,
+                        # so execute check for content update with dummy hash and content
                         pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
                         persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time,
                                                     content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
-                
-                time.sleep(args.pooling_time)
-        
-        elif args.fetch_type == 'oneshot':
-            print("📥 Fetching data (oneshot)...")
-            
-            # For each of PageMonitor instance inside pages_monitors list...
-            for pm in pages_monitors:
-                
-                # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                content_available = persistence_engine.is_content_available(page_name=pm.page.name)
 
-                print(f"Is content available? {content_available}")
-
-                if content_available:
-                    page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
-                    print("----------------------")
-                    print(f"Content for {page_content.page_name} exists with hash {page_content.content_hash}")
-
-                    # 2. Check if there is any update since last saved content
-                    pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
-                    
-                    # New content detected
-                    if pc.page_name:
-                    
-                        # 3. Add new content to Persistence
-                        persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time, 
-                                                    content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
-                
+                # Infinite loop for 'interactive' mode.
+                # For 'oneshot' mode, break the loop after the first run.
+                if args.fetch_type == 'oneshot':
+                    break
                 else:
-                    print(f"New content for {pm.page.name}")
-                    pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
-                    persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time,
-                                                   content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
-        
+                    loop_counter = loop_counter + 1
+                    time.sleep(pooling_time)
+                
         else:
-            print("Can't execute fetching data!")
+            print("❌ Can't execute fetching data")
 
 
 

@@ -21,21 +21,20 @@ class PageMonitor:
         
         try:
         
-            print(f"🚀 Request has been sent")
-            response = requests.get(self.page.url, timeout = 60)
+            print(f"🚀 Request to a given URL {self.page.url} has been sent")
+            response = requests.get(self.page.url, timeout=60)
             response.raise_for_status()
             
+            # Parse obtained text from the URL based on the configured Parser 
             content = self.parser.parse(response.text)
             
             if content:
-                print(f"✅ Content has been found")
+                print(f"✅ Content has been found and parsed successfully")
                 return content.get_text(separator = ' ', strip = True)
             else:
-                print("No CONTENT!!!! :(")
+                print("❌ No Content or Content could not be parsed")
                 return None
             
-            print(content)
-        
         except Exception as e:
             print(f"❌ Error fetching {self.page.url}: {e}")
             return None
@@ -47,7 +46,7 @@ class PageMonitor:
 
     def check_for_content_update(self, latest_persisted_hash: str, latest_persisted_content: str) -> PageContent:
         
-        print(f"🔍 Checking content for {self.page.name} ({self.page.url})")
+        print(f"\n🔍 Checking content for Page [{self.page.name}] ({self.page.url})")
 
         content = self._get_content()
         
@@ -80,8 +79,6 @@ class PageMonitor:
 
                 notifier.notify(current_hash)
 
-
-            
                 now = datetime.now()
                 return PageContent(page_name=self.page.name, content_time=now,
                                    content_hash=self.last_hash, full_content=latest_persisted_content, added_content=new_content)
@@ -89,20 +86,6 @@ class PageMonitor:
             elif current_hash == latest_persisted_hash:
                 
                 print("⚠️ No change detected.")
-
-                # No Change detected so no Notifier execution and no Persistence Layer involved
-                #print("NOTIFIER HERE!")
-                #from notifier import Notifier, ConsoleNotifier, FileNotifier
-                
-                #console_notifier = ConsoleNotifier()
-                #file_notifier = FileNotifier()
-            
-                #notifier = Notifier()
-                #notifier.subscribe(console_notifier.notify)
-                #notifier.subscribe(file_notifier.notify)
-
-                #notifier.notify(current_hash)
-
 
                 now = datetime.now()
                 return PageContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)
@@ -116,25 +99,3 @@ class PageMonitor:
             now = datetime.now()
             return PageContent(page_name=self.page.name, content_time=now,
                                 content_hash=self.last_hash, full_content=content, added_content=content)
-
-
-        #if current_hash != self.last_hash:
-            #print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
-            #self.last_hash = current_hash
-
-            
-            #now = datetime.now()
-            #self.persistence.add_content(self.page.name, now, self.last_hash, content)
-            #return PageContent(name=self.page.name, is_new=False, is_update=True, update_time=now, hash=self.last_hash, content=self.last_content)
-
-            # TODO: Here will be a super important part - informing about the new content.
-            # Sending info that the new content is available
-            # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc... 
-        
-        
-        #else:
-            #print("⚠️ No change detected.")
-
-            #now = datetime.now()
-            #self.persistence.add_content(self.page.name, now, self.last_hash, None)
-            #return PageContent(name=self.page.name, is_new=False, is_update=False, creation_time=None, update_time=None, hash=self.last_hash, content=self.last_content)

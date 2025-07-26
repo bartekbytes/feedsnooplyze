@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.10] - 2025-07-25
+## [0.1.11] - 2025-07-26
+
+### Changes
+
+- For `interactive` mode, make `pooling_time` configurable either from command-line or from config file.
+  The value from command-line takes precedence over the value from the config file.
+- Make print of the program more descriptive (add some descriptions, remove temporary ones)
+- Unify code of `interactive` and `oneshot` modes as they do exactly the same (so no need to duplicated code)
+
+## [0.1.10] - 2025-07-26
 
 ### Changes
 

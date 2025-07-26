@@ -1,6 +1,6 @@
 # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
 GeneralConfig:
-  pool_time: 60
+  pooling_time: 60
   author: "vizaard"
 
 PersistenceConfig:
