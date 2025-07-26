@@ -15,7 +15,6 @@ class PageMonitor:
     page: Page = field(default_factory=Page)
     parser: ParserBase = field(default_factory=ParserBase)
     last_hash: Optional[str] = None
-    last_content: Optional[str] = None
 
 
     def _get_content(self):
@@ -46,14 +45,14 @@ class PageMonitor:
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
 
 
-    def check_for_content_update(self, latest_persisted_hash: str) -> PageContent:
+    def check_for_content_update(self, latest_persisted_hash: str, latest_persisted_content: str) -> PageContent:
         
         print(f"🔍 Checking content for {self.page.name} ({self.page.url})")
 
         content = self._get_content()
         
         if content is None:
-            return PageContent(name=None, is_new=None, is_update=None, creation_time=None, update_time=None, hash=None, content=None)
+            return PageContent(page_name=None, content_time=None,  content_hash=None, full_content=None, added_content=None)
         
         current_hash = self._get_content_hash(content)
         
@@ -65,7 +64,8 @@ class PageMonitor:
                 print(f"✅ Content has changed, current hash: {current_hash}, last hash: {latest_persisted_hash}")
                 self.last_hash = current_hash
 
-                cp = ContentComparer(new_string=content, old_string=self.last_content)
+                cp = ContentComparer(new_string=content, old_string=latest_persisted_content)
+                new_content = cp.get_difference(name=self.last_hash)
 
 
                 print("NOTIFIER HERE!")
@@ -83,32 +83,29 @@ class PageMonitor:
 
             
                 now = datetime.now()
-                return PageContent(name=self.page.name, is_new=False, is_update=True, creation_time=None, update_time=now, hash=self.last_hash, content=self.last_content)
-
-                # TODO: Here will be a super important part - informing about the new content.
-                # Sending info that the new content is available
-                # Various channels can be involved: text on console, SMS, Telegram, Whatapp, Wechat, etc...
-                 
+                return PageContent(page_name=self.page.name, content_time=now,
+                                   content_hash=self.last_hash, full_content=latest_persisted_content, added_content=new_content)
         
             elif current_hash == latest_persisted_hash:
                 
                 print("⚠️ No change detected.")
 
-                print("NOTIFIER HERE!")
-                from notifier import Notifier, ConsoleNotifier, FileNotifier
+                # No Change detected so no Notifier execution and no Persistence Layer involved
+                #print("NOTIFIER HERE!")
+                #from notifier import Notifier, ConsoleNotifier, FileNotifier
                 
-                console_notifier = ConsoleNotifier()
-                file_notifier = FileNotifier()
+                #console_notifier = ConsoleNotifier()
+                #file_notifier = FileNotifier()
             
-                notifier = Notifier()
-                notifier.subscribe(console_notifier.notify)
-                notifier.subscribe(file_notifier.notify)
+                #notifier = Notifier()
+                #notifier.subscribe(console_notifier.notify)
+                #notifier.subscribe(file_notifier.notify)
 
-                notifier.notify(current_hash)
+                #notifier.notify(current_hash)
 
 
                 now = datetime.now()
-                return PageContent(name=self.page.name, is_new=False, is_update=False, creation_time=None, update_time=None, hash=latest_persisted_hash, content=self.last_content)
+                return PageContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)
 
         elif not latest_persisted_hash and self.last_hash is None:
 
@@ -117,8 +114,10 @@ class PageMonitor:
             print(f"✅ Initial content saved, hash: {self.last_hash}")
             
             now = datetime.now()
-            return PageContent(name=self.page.name, is_new=True, is_update=False, creation_time=now, update_time=None, hash=self.last_hash, content=content)
-        
+            return PageContent(page_name=self.page.name, content_time=now,
+                                content_hash=self.last_hash, full_content=content, added_content=content)
+
+
         #if current_hash != self.last_hash:
             #print(f"✅ Content has changed, current hash: {self.current_hash}, last hash: {self.last_hash}")
             #self.last_hash = current_hash

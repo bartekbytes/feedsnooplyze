@@ -1,7 +1,8 @@
-CREATE TABLE content
+CREATE TABLE PageContent
 (
-    name VARCHAR(100),
-    timeadded DATETIME,
-    hash VARCHAR(100),
-    content TEXT
+    PageName VARCHAR(100),
+    ContentTime DATETIME,
+    ContentHash VARCHAR(100),
+    FullContent TEXT,
+    AddedContent TEXT
 )

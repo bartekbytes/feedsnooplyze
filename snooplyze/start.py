@@ -52,25 +52,25 @@ def main():
         print("🔧 Running setup...")
 
         if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            print("DuckDB")
+            print(f"... for 🦆 {PersistenceEngineType.DUCKDB.value} Peristence Engine")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCKDB)
             pe.set_dbname(persistence_config.db_file_path)
             pe.execute_setup()
         
         elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
-            print("SQLite")
+            print(f"... for 📁 {PersistenceEngineType.SQLITE.value} Peristence Engine")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.SQLITE)
             pe.set_dbname(persistence_config.db_file_path)
             pe.execute_setup()
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            print("PostgreSQL")
+            print(f"... for 🐘 {PersistenceEngineType.POSTGRESQL.value} Peristence Engine")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
             pe.set_connection_string(persistence_config.connection_string)
             pe.execute_setup()
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
-            print("MySQL")
+            print(f"... for 🐬 {PersistenceEngineType.MYSQL.value} Peristence Engine")
             pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.MYSQL)
             pe.set_host(persistence_config.host)
             pe.set_port(persistence_config.port)
@@ -78,11 +78,7 @@ def main():
             pe.set_password(persistence_config.password)
             pe.set_database(persistence_config.database)
             pe.execute_setup()
-        
-        #elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE: # Dummy, TBD
-        #    print("SQLite")
-        #    print("SQLite still not supported")
-        #    exit(1)
+    
         
         else:
             print(f"{persistence_config.persistence} is not supported")
@@ -139,30 +135,38 @@ def main():
             while True:
                 print("📥 Fetching data (interactive)...")
 
+
+
                 # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:
                 
                     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                    content_available = persistence_engine.is_content_available(name=pm.page.name)
+                    content_available = persistence_engine.is_content_available(page_name=pm.page.name)
 
                     print(f"Is content available? {content_available}")
 
                     if content_available:
-                        page_content = persistence_engine.get_latest_by_name(name=pm.page.name)
+                        page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
                         print("----------------------")
-                        print(f"Content for {page_content.name} exists with latest hash {page_content.hash}")
-                    
+                        print(f"Content for {page_content.page_name} exists with hash {page_content.content_hash}")
+
                         # 2. Check if there is any update since last saved content
-                        pc = pm.check_for_content_update(latest_persisted_hash=page_content.hash)
+                        pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
                     
-                        # 3. Add new content to Persistence
-                        persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
+                        # New content detected
+                        if pc.page_name:
+                    
+                            # 3. Add new content to Persistence
+                            persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time, 
+                                                        content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
                     else:
                         print(f"New content for {pm.page.name}")
-                        pc = pm.check_for_content_update(latest_persisted_hash=None)
-                        persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
-
+                        pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
+                        persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time,
+                                                    content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                
+                
                 time.sleep(args.pooling_time)
         
         elif args.fetch_type == 'oneshot':
@@ -172,29 +176,30 @@ def main():
             for pm in pages_monitors:
                 
                 # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                content_available = persistence_engine.is_content_available(name=pm.page.name)
+                content_available = persistence_engine.is_content_available(page_name=pm.page.name)
 
                 print(f"Is content available? {content_available}")
 
                 if content_available:
-                    page_content = persistence_engine.get_latest_by_name(name=pm.page.name)
+                    page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
                     print("----------------------")
-                    print(f"Content for {page_content.name} exists with hash {page_content.hash}")
+                    print(f"Content for {page_content.page_name} exists with hash {page_content.content_hash}")
 
-                    page_content_with_content = persistence_engine.get_latest_by_name_with_content(name=pm.page.name)
-                    print("----------------------")
-                    print(f"Content for {page_content_with_content.name} exists with hash {page_content_with_content.hash}")
-                    
                     # 2. Check if there is any update since last saved content
-                    pc = pm.check_for_content_update(latest_persisted_hash=page_content.hash)
+                    pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
                     
-                    # 3. Add new content to Persistence
-                    persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
+                    # New content detected
+                    if pc.page_name:
+                    
+                        # 3. Add new content to Persistence
+                        persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time, 
+                                                    content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
                 else:
                     print(f"New content for {pm.page.name}")
-                    pc = pm.check_for_content_update(latest_persisted_hash=None)
-                    persistence_engine.add_content(name=pc.name, time_added=pc.creation_time, hash=pc.hash, content=pc.content)
+                    pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
+                    persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time,
+                                                   content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
         
         else:
             print("Can't execute fetching data!")

@@ -1,7 +1,8 @@
-CREATE TABLE public.content
+CREATE TABLE public.pagecontent
 (
-    name character varying(100),
-    timeadded timestamp without time zone,
-    hash character varying(100),
-    content text
+    pagename character varying(100),
+    contenttime timestamp without time zone,
+    contenthash character varying(100),
+    fullcontent text,
+    addedcontent text
 )

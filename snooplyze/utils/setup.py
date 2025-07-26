@@ -34,7 +34,7 @@ class PersistenceLayerSetup:
             # add try here
             # duckdb.duckdb.IOException: IO Error: File is already open in
             # duckdb.duckdb.CatalogException: Catalog Error: Table with name "content" already exists! 
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.DUCKDB
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.DUCKDB.value
             from persistence import DuckDbPersistenceEngine
             pe = DuckDbPersistenceEngine(database=self.db_name)
             pe_connection = pe.connect()
@@ -42,15 +42,14 @@ class PersistenceLayerSetup:
             if pe_connection:
                 print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
 
-                result = pe_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'Content'").fetchall()
-                print(result)
+                result = pe_connection.execute("SELECT * FROM information_schema.tables WHERE table_name = 'PageContent'").fetchall()
 
                 if result:
                     print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
                     print(f"⚠️ Warning this procedure is descructibe!")
                     shall_we_proceed = input("Do you want to proceed? [y/n] ")
                     if shall_we_proceed == 'y':
-                        pe_connection.execute("DROP TABLE Content")
+                        pe_connection.execute("DROP TABLE PageContent")
                         result = pe.create_structure(connection=pe_connection)
                     
                         if result:
@@ -63,7 +62,7 @@ class PersistenceLayerSetup:
                         print(f"⚠️ Set-up aborted.")
                 
                 else:
-                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} does not exist, will be created")
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure does not exist, will be created")
                     result = pe.create_structure(connection=pe_connection)
 
                     
@@ -80,7 +79,7 @@ class PersistenceLayerSetup:
         
 
         if self.persistence_engine_type == PersistenceEngineType.SQLITE:
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.SQLITE
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.SQLITE.value
             from persistence import SQLitePersistenceEngine
             pe = SQLitePersistenceEngine(database=self.db_name)
             pe_connection = pe.connect()
@@ -88,15 +87,14 @@ class PersistenceLayerSetup:
             if pe_connection:
                 print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
 
-                result = pe_connection.execute("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'content'").fetchall()
-                print(result)
+                result = pe_connection.execute("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'PageContent'").fetchall()
 
                 if result:
                     print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
                     print(f"⚠️ Warning this procedure is descructibe!")
                     shall_we_proceed = input("Do you want to proceed? [y/n] ")
                     if shall_we_proceed == 'y':
-                        pe_connection.execute("DROP TABLE Content")
+                        pe_connection.execute("DROP TABLE PageContent")
                         result = pe.create_structure(connection=pe_connection)
                     
                         if result:
@@ -109,7 +107,7 @@ class PersistenceLayerSetup:
                         print(f"⚠️ Set-up aborted.")
                 
                 else:
-                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} does not exist, will be created")
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure does not exist, will be created")
                     result = pe.create_structure(connection=pe_connection)
 
                     
@@ -126,25 +124,23 @@ class PersistenceLayerSetup:
 
 
         elif self.persistence_engine_type == PersistenceEngineType.POSTGRESQL:
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL.value
             # add try here 
             from persistence import PostgreSQLPersistenceEngine
             pe = PostgreSQLPersistenceEngine(connection_string=self.set_connection_string)
             pe_connection = pe.connect()
-            print(pe_connection)
             
             if pe_connection:
                 print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
 
-                result = pe_connection.execute("SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'content'").fetchall()
-                print(result)
+                result = pe_connection.execute("SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'pagecontent'").fetchall()
 
                 if result:
                     print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
                     print(f"⚠️ Warning this procedure is descructibe!")
                     shall_we_proceed = input("Do you want to proceed? [y/n] ")
                     if shall_we_proceed == 'y':
-                        pe_connection.execute("DROP TABLE content")
+                        pe_connection.execute("DROP TABLE pagecontent")
                         result = pe.create_structure(connection=pe_connection)
 
                         if result:
@@ -157,7 +153,7 @@ class PersistenceLayerSetup:
                         print(f"⚠️ Set-up aborted.")
                 
                 else:
-                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} does not exist, will be created")
+                    print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure does not exist, will be created")
                     result = pe.create_structure(connection=pe_connection)
                     
                     if result:
@@ -173,7 +169,7 @@ class PersistenceLayerSetup:
 
 
         elif self.persistence_engine_type == PersistenceEngineType.MYSQL:
-            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.MYSQL
+            PERSISTENCE_ENGINE_NAME = PersistenceEngineType.MYSQL.value
             # add try here 
             from persistence import MySQLPersistenceEngine
             pe = MySQLPersistenceEngine(
@@ -183,22 +179,20 @@ class PersistenceLayerSetup:
                 password=self.password,
                 database=self.database)
             pe_connection = pe.connect()
-            print(pe_connection)
             
             if pe_connection:
                 print(f"✅ {PERSISTENCE_ENGINE_NAME} connection established")
                 cursor = pe_connection.cursor()
 
-                result = cursor.execute("SELECT * FROM information_schema.tables WHERE table_name = 'content'")
+                result = cursor.execute("SELECT * FROM information_schema.tables WHERE table_name = 'PageContent'")
                 result = cursor.fetchall()
-                print(result)
 
                 if result:
                     print(f"⚠️ {PERSISTENCE_ENGINE_NAME} structure exists, will be re-created")
                     print(f"⚠️ Warning this procedure is descructibe!")
                     shall_we_proceed = input("Do you want to proceed? [y/n] ")
                     if shall_we_proceed == 'y':
-                        cursor.execute("DROP TABLE content")
+                        cursor.execute("DROP TABLE PageContent")
                         result = pe.create_structure(connection=pe_connection)
 
                         if result:
