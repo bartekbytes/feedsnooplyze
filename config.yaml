@@ -24,14 +24,11 @@ PersistenceConfig:
   #password: mysql
   #database: snooplyze
 
-# This is confing for Microsoft SQL Server - Uncomment if you want to use this Persistence Engine
-# WARNING - this hasn't been implemented yet!
-# persistence: mssql
-# connection_string: MYSQLSUPERINSTANCE
-# database_name: vizdb
-
 NotificationConfig:
   - notification_type: console
+  - notification_type: flatfile
+    file_path: C:\code\snooplyze.txt
   - notification_type: email
-    email_address: adad@wp.pl
-    subject: "alter"
+    email_address: XXX
+    email_password: XXX
+    recipients: XXX

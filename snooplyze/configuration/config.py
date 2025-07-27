@@ -4,6 +4,7 @@ from typing import Optional
 import yaml
 
 from persistence import PersistenceEngineType
+from notifier import NotifierType
 
 
 ### General Config Classess
@@ -37,12 +38,6 @@ class PostgreSQLConfig(PersistenceConfigBase):
     connection_string: str
 
 @dataclass
-class MSSQLConfig(PersistenceConfigBase):
-    persistence: str
-    connection_string: str
-    database_name: str
-
-@dataclass
 class MySQLConfig(PersistenceConfigBase):
     persistence: str
     host: str
@@ -54,27 +49,25 @@ class MySQLConfig(PersistenceConfigBase):
 
 
 # Notification Config Classess
+
 @dataclass
 class NotificationConfigBase(ABC):
     pass
 
 @dataclass
-class ConsoleNotification(NotificationConfigBase):
+class ConsoleNotificationConfig(NotificationConfigBase):
     pass
 
 @dataclass
-class FlatFileNotification(NotificationConfigBase):
+class FlatFileNotificationConfig(NotificationConfigBase):
     file_path: str
 
 @dataclass
-class EmailNotification(NotificationConfigBase):
+class EmailNotificationConfig(NotificationConfigBase):
     email_address: str
-    subject: Optional[str] = None
+    email_password: str
+    recipients: str
 
-@dataclass
-class SMSNotification(NotificationConfigBase):
-    phone_number: str
-    provider: Optional[str] = None
 
 
 
@@ -98,15 +91,15 @@ class ConfigLoader:
     
 
     def _create_persistence_config(self, data: dict) -> PersistenceConfigBase:
-        type_ = data.get("persistence").upper()
+        type = data.get("persistence").upper()
         
-        if type_ == PersistenceEngineType.POSTGRESQL:
+        if type == PersistenceEngineType.POSTGRESQL:
             return PostgreSQLConfig(persistence=PersistenceEngineType.POSTGRESQL, connection_string=data["connection_string"])
-        elif type_ == PersistenceEngineType.DUCKDB:
+        elif type == PersistenceEngineType.DUCKDB:
             return DuckDBConfig(persistence=PersistenceEngineType.DUCKDB, db_file_path=data["db_file_path"])
-        elif type_ == PersistenceEngineType.SQLITE:
+        elif type == PersistenceEngineType.SQLITE:
             return SQLiteConfig(persistence=PersistenceEngineType.SQLITE, db_file_path=data["db_file_path"])
-        elif type_ == PersistenceEngineType.MYSQL:
+        elif type == PersistenceEngineType.MYSQL:
             return MySQLConfig(persistence=PersistenceEngineType.MYSQL, 
                                 host=data["host"],
                                 port=data["port"],
@@ -114,31 +107,22 @@ class ConfigLoader:
                                 password=data["password"],
                                 database=data["database"]
                                )
-        elif type_ == PersistenceEngineType.MSSQLSERVER:
-            return MSSQLConfig(
-                persistence=PersistenceEngineType.MSSQLSERVER,
-                connection_string=data["connection_string"],
-                db_name=data["db_name"]
-            )
         else:
             raise ValueError(f"Unsupported persistence type: {type_.upper()}")
 
 
     def _create_notification_config(self, data: dict) -> NotificationConfigBase:
-        type_ = data.get("notification_type")
-        if type_ == "console":
-            return ConsoleNotification()
-        elif type_ == "flatfile":
-            return FlatFileNotification(file_path=data["file_path"])
-        elif type_ == "email":
-            return EmailNotification(
+        type_ = data.get("notification_type").upper()
+
+        if type_ == NotifierType.CONSOLE:
+            return ConsoleNotificationConfig()
+        elif type_ == NotifierType.FLATFILE:
+            return FlatFileNotificationConfig(file_path=data["file_path"])
+        elif type_ == NotifierType.EMAIL:
+            return EmailNotificationConfig(
                 email_address=data["email_address"],
-                subject=data.get("subject")
-            )
-        elif type_ == "sms":
-            return SMSNotification(
-                phone_number=data["phone_number"],
-                provider=data.get("provider")
+                email_password=data["email_password"],
+                recipients=data["recipients"]
             )
         else:
             raise ValueError(f"Unsupported notification type: {type_.upper()}")

@@ -2,12 +2,14 @@ import requests
 import hashlib
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, List
 
 # snooplyze modules
 from page import Page, PageContent
 from parser import ParserBase
 from utils import ContentComparer
+from configuration.config import NotificationConfigBase
+from notifier import *
 
 
 @dataclass
@@ -15,6 +17,7 @@ class PageMonitor:
     page: Page = field(default_factory=Page)
     parser: ParserBase = field(default_factory=ParserBase)
     last_hash: Optional[str] = None
+    notifiers: Optional[List[NotificationConfigBase]] = None
 
 
     def _get_content(self):
@@ -42,6 +45,25 @@ class PageMonitor:
 
     def _get_content_hash(self, content):
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
+    
+
+    def _make_notifiers_from_config(self, notification_config: List[NotificationConfigBase]) -> List[Notifier]:
+
+        now_date = datetime.now()
+        now = now_date.strftime("%Y-%m-%d %H:%M:%S")
+        notifications = []
+        for ncb in notification_config:
+            notifier_name = ncb.__class__.__name__
+            if notifier_name == "ConsoleNotificationConfig":
+                notifications.append(ConsoleNotifier(page_name=self.page.name, content_time=now))
+            elif notifier_name == "FlatFileNotificationConfig":
+                notifications.append(FlatFileNotifier(file_path=ncb.file_path, page_name=self.page.name, content_time=now))
+            elif notifier_name == "EmailNotificationConfig":
+                notifications.append(EmailNotifier(email_address=ncb.email_address, email_password=ncb.email_password, recipients=ncb.recipients,
+                                                   page_name=self.page.name, content_time=now, page_url=self.page.url))
+
+        return notifications
+
 
 
     def check_for_content_update(self, latest_persisted_hash: str, latest_persisted_content: str) -> PageContent:
@@ -60,26 +82,23 @@ class PageMonitor:
 
             if current_hash != latest_persisted_hash:
                 
+                now = datetime.now()
+
                 print(f"✅ Content has changed, current hash: {current_hash}, last hash: {latest_persisted_hash}")
                 self.last_hash = current_hash
 
+                # Instantiate ContentComparer, compare a new and old content and get only added content
                 cp = ContentComparer(new_string=content, old_string=latest_persisted_content)
-                new_content = cp.get_difference(name=self.last_hash)
+                new_content = cp.get_difference()
 
-
-                print("NOTIFIER HERE!")
-                from notifier import Notifier, ConsoleNotifier, FileNotifier
-                
-                console_notifier = ConsoleNotifier()
-                file_notifier = FileNotifier()
+                # Create Notifiers for NotificationConfig
+                notifiers_list = self._make_notifiers_from_config(self.notifiers)
             
+                # Create a main Notifier, register all Notifiers obtained from Config and run notify for all of them
                 notifier = Notifier()
-                notifier.subscribe(console_notifier.notify)
-                notifier.subscribe(file_notifier.notify)
-
-                notifier.notify(current_hash)
-
-                now = datetime.now()
+                [notifier.subscribe(n.notify) for n in notifiers_list]
+                notifier.notify(new_content)
+                
                 return PageContent(page_name=self.page.name, content_time=now,
                                    content_hash=self.last_hash, full_content=latest_persisted_content, added_content=new_content)
         
@@ -91,10 +110,18 @@ class PageMonitor:
                 return PageContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)
 
         elif not latest_persisted_hash and self.last_hash is None:
-
+                
             self.last_hash = current_hash
 
             print(f"✅ Initial content saved, hash: {self.last_hash}")
+
+            # Create Notifiers for NotificationConfig
+            notifiers_list = self._make_notifiers_from_config(self.notifiers)
+            
+            # Create a main Notifier, register all Notifiers obtained from Config and run notify for all of them
+            notifier = Notifier()
+            [notifier.subscribe(n.notify) for n in notifiers_list]
+            notifier.notify("Fist content for the Page")
             
             now = datetime.now()
             return PageContent(page_name=self.page.name, content_time=now,

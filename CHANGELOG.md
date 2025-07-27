@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.12] - 2025-07-27
+
+### Changes
+
+- Finalized **Notification** mechanism
+- `EmailNotifier` added, sending via Google Email account
+- Email template added
+
 ## [0.1.11] - 2025-07-26
 
 ### Changes

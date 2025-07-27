@@ -143,6 +143,8 @@ def main():
 
                 # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:
+
+                    pm.notifiers = notifications_config
                 
                     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
                     content_available = persistence_engine.is_content_available(page_name=pm.page.name)
