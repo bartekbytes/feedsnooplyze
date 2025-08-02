@@ -7,4 +7,4 @@ class ConsoleNotifier(Notifier):
         self.content_time = content_time
     
     def notify(self, message):
-        print(f"🔔 {self.content_time} | {self.page_name} | {message}")
+        print(f"\n| 🔔\n| Time: {self.content_time} | Page: {self.page_name}\n| Content:\n| {message}/n")

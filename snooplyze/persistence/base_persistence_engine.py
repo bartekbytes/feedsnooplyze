@@ -23,4 +23,12 @@ class PersistenceEngine(ABC):
     def add_content(self):
         pass
 
+    @abstractmethod
+    def is_content_available(self):
+        pass
+
+    @abstractmethod
+    def get_latest_by_name(self):
+        pass
+
 

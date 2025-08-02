@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
@@ -8,13 +9,14 @@ class NotifierType(str, Enum):
     EMAIL = "EMAIL"
 
 
-class Notifier():
+class Notifier(ABC):
     def __init__(self):
         self.subscribers = []
     
     def subscribe(self, callback):
         self.subscribers.append(callback)
 
+    @abstractmethod
     def notify(self, message):
         for callback in self.subscribers:
             callback(message)
