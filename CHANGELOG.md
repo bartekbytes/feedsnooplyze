@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.13] - 2025-08-01
+
+### Changes
+
+- Documentation
+  - `README.md` updated
+  - `docs/technical-overview.md` created
+
 ## [0.1.12] - 2025-07-27
 
 ### Changes
