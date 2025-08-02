@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.13] - 2025-08-01
+## [0.1.14] - 2025-08-02
+
+### Changes
+
+- `.dockerignore` file added
+- `Dockerfile` file added
+
+## [0.1.13] - 2025-08-02
 
 ### Changes
 

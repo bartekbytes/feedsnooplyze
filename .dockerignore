@@ -1,0 +1,5 @@
+.venv/
+persistence/
+
+.git/
+.gitignore
