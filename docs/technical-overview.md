@@ -151,12 +151,12 @@ Pages: # Indicates that this is a configuration for Pages
     url: "https://duckdb.org/news/" # and it's URL
     description: "Duck DB News Page" # Optional description
     parser: # Parser section, only one parser per Page
-      - type: "divclass" # type of Parser
+      - type: "div_class" # type of Parser
         class_name: "newstiles" # and any additional arguments (if necessary)
   - name: "Databricks Blog" # Another Page
     url: "https://www.databricks.com/blog"
     parser:
-      - type: "mainelement" # Here we use another type of Parser
+      - type: "main_element" # Here we use another type of Parser
 ```
 
 ## 🧩 Parser
@@ -217,7 +217,7 @@ Generic parsers are **not tied to any specific Page**. They implement general pa
 
 **Example:**
 
-Using a generic parser named `divclass` with a required argument `class_name` configured directly in the _Pages Configuration File_.
+Using a generic parser named `div_class` with a required argument `class_name` configured directly in the _Pages Configuration File_.
 
 ```yaml
 Pages:
@@ -225,7 +225,7 @@ Pages:
     url: "https://duckdb.org/news/"
     description: "Duck DB News Page"
     parser:
-      - type: "divclass"
+      - type: "div_class"
         class_name: "newstiles"
 ```
 
@@ -246,7 +246,7 @@ Pages:
     url: "https://duckdb.org/news/"
     description: "Duck DB News Page"
     parser:
-      - type: "duckdbblog"
+      - type: "duckdb_blog"
 ```
 
 #### Extensibility of Custom Parsers

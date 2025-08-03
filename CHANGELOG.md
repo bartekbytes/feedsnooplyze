@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.15] - 2025-08-03
+
+### Changes
+
+- Refactoring **Parser** mechanism by using a `registry pattern` (still need to handle a special case with parameters, though)
+
 ## [0.1.14] - 2025-08-02
 
 ### Changes

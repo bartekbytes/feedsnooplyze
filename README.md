@@ -97,7 +97,7 @@ Pages:
     url: "https://duckdb.org/news/"
     description: "Duck DB News Page"
     parser:
-      - type: "divclass"
+      - type: "div_class"
         class_name: "newstiles"
 ```
 
@@ -203,6 +203,7 @@ Below is a list of all **command-line arguments** supported by the application:
 - ✅ Configuration of Pages via Config File
 - 🚧 Advanced validation of Config Files
 - 🚧 Increase test coverage, writing more tests (❗ important)
+- 🚧 Refactoring code to introduce `registry pattern` instead of spaghetti-like `if-elif-elif-...-elif-else`
 
 # Advanced Features
 

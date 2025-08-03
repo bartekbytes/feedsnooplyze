@@ -3,7 +3,7 @@ import yaml
 
 # import snooplyze modules
 from page import PageMonitor, Page
-from parser import *
+from parser import ParserType, get_parser, DivClassParser
 
 
 @dataclass
@@ -44,20 +44,19 @@ class PagesConfigLoader:
             if "parser" in item:
                 page_parser_type = page_parser[0].get('type').lower()
 
-                from parser import ParserType
-
-                if page_parser_type == ParserType.ALL_DOCUMENT:
-                    parser_config_variables = {}
-                    parser_config = AllDocumentParser(**parser_config_variables)
-
-                if page_parser_type == ParserType.MAIN_ELEMENT:
-                    parser_config_variables = {}
-                    parser_config = MainElementParser(**parser_config_variables)
-
+                # TODO: eliminate this ugly if-else structure by adapting a parser registry pattern
+                # also for the cases with parameters
+                
+                # Special case of Perser (DivClassParser) as it has a different structure
                 if page_parser_type == ParserType.DIV_CLASS:
                     class_name = page_parser[0].get('class_name')
                     parser_config_variables = {'class_name': class_name}
                     parser_config = DivClassParser(**parser_config_variables)
+                else:
+                    # For the rest Parsers, use parser registry pattern
+                    parser_config_variables = {}
+                    parser_config = get_parser(ParserType(page_parser_type))
+
             else:
                 ValueError(f"No parser secion for Page {page_name}")
             

@@ -28,7 +28,8 @@ class PageMonitor:
             response = requests.get(self.page.url, timeout=60)
             response.raise_for_status()
             
-            # Parse obtained text from the URL based on the configured Parser 
+            # Parse obtained text from the URL based on the configured Parser
+            print(f"📜 Parsing using {self.parser.__class__.__name__} parser") 
             content = self.parser.parse(response.text)
             
             if content:
@@ -61,7 +62,9 @@ class PageMonitor:
             elif notifier_name == "EmailNotificationConfig":
                 notifications.append(EmailNotifier(email_address=ncb.email_address, email_password=ncb.email_password, recipients=ncb.recipients,
                                                    page_name=self.page.name, content_time=now, page_url=self.page.url))
-
+            elif notifier_name == "TelegramNotificationConfig":
+                notifications.append(TelegramNotifier(token=ncb.token, chat_id=ncb.chat_id, page_name=self.page.name, content_time=now, page_url=self.page.url))
+                
         return notifications
 
 

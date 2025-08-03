@@ -15,7 +15,7 @@ class DuckDbBlogParser(ParserBase):
     def parse(self, text_to_parse) -> Any | None:
 
         soup = BeautifulSoup(text_to_parse, 'html.parser')
-        content = soup.find('div', class_ = "https://duckdb.org/news/")
+        content = soup.find('div', class_ = "newstiles")
     
         if content:
             return content
