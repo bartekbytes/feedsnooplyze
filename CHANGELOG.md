@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.18] - 2025-08-03
+
+### Changes
+
+- Add example files for both Configuration Files: [#16]
+  - Application Configuration File - `config.yaml.example`
+  - Pages Configuration File - `snooplyze.yaml.example`
+
 ## [0.1.17] - 2025-08-03
 
 ### Changes

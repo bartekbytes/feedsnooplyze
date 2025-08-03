@@ -1,0 +1,17 @@
+# snooplyze.yaml.example
+# Example Pages Configuration File for snooplyze.
+# This file is used to define the pages that snooplyze will monitor.
+# Each page can have a name, URL, description, and a parser configuration.
+# Uncomment and modify the sections below to add your own pages.
+
+#Pages:
+#  - name: "Duck DB"
+#    url: "https://duckdb.org/news/"
+#    description: "Duck DB News Page"
+#    parser:
+#      - type: "duckdb_blog" # DuckDB specific parser
+#  - name: "Databricks Blog"
+#    url: "https://www.databricks.com/blog"
+#    parser:
+#      - type: "div_class" # Generic parser for pages with a specific class
+#        class_name: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 gap-y-8" # Class to target

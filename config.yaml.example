@@ -1,0 +1,67 @@
+# Snooplyze Configuration Example
+# This is an example configuration file for snooplyze.
+# This file is used to define the general configuration, persistence settings, and notification settings for snooplyze.
+# Uncomment and modify the sections below to suit your needs.
+
+# The following sections are included::
+# - GeneralConfig: General settings for snooplyze (mandatory)
+# - PersistenceConfig: Settings for the persistence engine (e.g., PostgreSQL, DuckDB) (mandatory)
+# - NotificationConfig: Settings for notifications (e.g., console, flatfile, email, telegram) (optional)
+
+
+
+
+# Uncomment and modify the section below to set general configuration options for snooplyze.
+# You can set the pooling time, which is the time in seconds between each polling of the pages.
+# This is useful for controlling how often snooplyze checks for updates on the monitored pages
+#GeneralConfig:
+#  pooling_time: 60 # Time in seconds between each polling of the pages
+
+
+
+
+# Uncomment and modify the section below to set up persistence for snooplyze.
+# You can choose to use PostgreSQL, DuckDB, SQLite, or MySQL as the persistence engine.
+# Each persistence engine requires specific configuration parameters such as connection string, database file path, or host and port.
+#PersistenceConfig:
+
+#  # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
+#  persistence: postgresql
+#  connection_string: "dbname=<db_name> user=<user_name> password=<user_password> host=<host_name/ip_address> port=<port_number>"
+
+#  # This is confing for DuckDB - Uncomment if you want to use this Persistence Engine
+#  persistence: duckdb
+#  db_file_path: <path_to_duckdb_file>
+
+#  # This is confing for SQLite - Uncomment if you want to use this Persistence Engine
+#  persistence: sqlite
+#  db_file_path: <path_to_sqlite_file>
+
+#  # This is confing for MySQL - Uncomment if you want to use this Persistence Engine
+#  persistence: mysql
+#  host: <host_name/ip_address>
+#  port: <port_number>
+#  user: <user_name>
+#  password: <user_password>
+#  database: <db_name>
+
+
+
+
+# NotificationConfig:
+# Uncomment and modify the section below to set up notifications for snooplyze.
+# You can choose to receive notifications via console, flatfile, email, or telegram.
+# Each notification type can be configured with specific parameters such as file path, email address, or token.
+# You can have multiple notification types configured at the same time.
+# If you do not want to use notifications, you can leave this section empty.
+#NotificationConfig:
+#  - notification_type: console
+#  - notification_type: flatfile
+#    file_path: <path_to_flatfile>
+#  - notification_type: email
+#    email_address: <gmail_email_address>
+#    email_password: <gmail_email_password>
+#    recipients: <list_of_email_recipients>
+#  - notification_type: telegram
+#    token: <telegram_bot_token>
+#    chat_id: <telegram_chat_id>

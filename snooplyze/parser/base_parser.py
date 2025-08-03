@@ -20,8 +20,6 @@ class ParserType(str, Enum):
 
     # Custom Parsers
     DUCKDB_BLOG = "duckdb_blog"
-    MICROSOFT_AZURE_VIRTUAL_MACHINES_BLOG = "microsoft_azure_virtual_machines_blog"
-    MICROSOFT_AZURE_AZURE_SQL_DATABASE_BLOG = "microsoft_azure_azure_sql_database_blog"
 
 class ParserBase(ABC):
     """
