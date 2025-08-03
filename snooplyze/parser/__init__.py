@@ -1,7 +1,7 @@
 from .base_parser import ParserBase, ParserType
 from .parser_registry import get_parser
 from .generic_parsers import AllDocumentParser, MainElementParser, DivClassParser
-from .custom_parsers import DuckDbBlogParser, MicrosoftAzureVirtualMachinesBlogParser, MicrosoftAzureAzureSQLDatabaseBlogParser
+from .custom_parsers import DuckDbBlogParser
 
 # Now, from persistence import PARSER_REGISTRY will work
 __all__ = ["ParserBase", "ParserType",
@@ -9,6 +9,4 @@ __all__ = ["ParserBase", "ParserType",
            
            "AllDocumentParser", "MainElementParser", "DivClassParser",
            
-           "DuckDbBlogParser",
-           "MicrosoftAzureVirtualMachinesBlogParser",
-           "MicrosoftAzureAzureSQLDatabaseBlogParser"]
+           "DuckDbBlogParser"]

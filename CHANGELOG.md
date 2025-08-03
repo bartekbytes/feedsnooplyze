@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.17] - 2025-08-03
+
+### Changes
+
+- Add docstring for classess, enums, methods, ...
+
 ## [0.1.16] - 2025-08-03
 
 ### Changes

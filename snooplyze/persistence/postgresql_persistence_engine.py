@@ -5,6 +5,25 @@ from page import PageContent
 
 
 class PostgreSQLPersistenceEngine(PersistenceEngine):
+    """
+    PostgreSQLPersistenceEngine provides persistence operations for storing and retrieving page content in a PostgreSQL database.
+    Attributes:
+        connection_string (str): The connection string used to connect to the PostgreSQL database.
+        connection: The active database connection object.
+    Methods:
+        __init__(connection_string: str):
+            Initializes the persistence engine with the given connection string.
+        create_structure(connection) -> bool:
+            Creates the required database structure by executing a SQL script. Returns True if the structure is created successfully.
+        connect():
+            Establishes a connection to the PostgreSQL database using the provided connection string. Returns the connection object if successful.
+        add_content(page_name: str, content_time: str, content_hash: str, full_content: str, added_content: str):
+            Inserts new page content into the database.
+        is_content_available(page_name: str) -> bool:
+            Checks if content for the specified page name exists in the database. Returns True if available.
+        get_latest_by_name(page_name: str) -> PageContent:
+            Retrieves the latest content for the specified page name from the database and returns it as a PageContent object.
+    """
 
     def __init__(self, connection_string: str):
         self.connection_string = connection_string

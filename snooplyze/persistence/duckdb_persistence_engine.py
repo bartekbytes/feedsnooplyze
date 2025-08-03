@@ -6,6 +6,32 @@ from page import PageContent
 
 
 class DuckDbPersistenceEngine(PersistenceEngine):
+    """
+    Persistence engine implementation using DuckDB as the backend database.
+    Args:
+        database (str): Path to the DuckDB database file.
+    Attributes:
+        database (str): Path to the DuckDB database file.
+        connection: DuckDB connection object.
+    Methods:
+        __init__(database: str):
+            Initializes the DuckDbPersistenceEngine with the database file path.
+        create_structure(connection):
+            Reads and executes the SQL structure script to initialize the database schema.
+            Waits for 10 seconds after execution and checks if the 'PageContent' table exists.
+            Returns True if the table exists, False otherwise.
+        connect():
+            Establishes a connection to the DuckDB database.
+            Sets the connection attribute and returns the connection object.
+        add_content(page_name, content_time, content_hash, full_content, added_content):
+            Inserts a new record into the 'PageContent' table with the provided content details.
+        is_content_available(page_name):
+            Checks if any content is available for the given page name.
+            Returns True if content exists, False otherwise.
+        get_latest_by_name(page_name):
+            Retrieves the latest content entry for the specified page name from the 'PageContent' table.
+            Returns a PageContent object with the latest entry's details.
+    """
 
     def __init__(self, database : str):
         self.database = database

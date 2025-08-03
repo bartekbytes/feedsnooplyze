@@ -14,6 +14,27 @@ from notifier import *
 
 @dataclass
 class PageMonitor:
+    """
+    Monitors a Web Page for content changes and runs configured Notifications when updates are detected.
+    Attributes:
+        page (Page): The Page to monitor.
+        parser (ParserBase): The parser used to extract content from the page.
+        last_hash (Optional[str]): The hash of the last known content.
+        notifiers (Optional[List[NotificationConfigBase]]): List of Notification configurations.
+    Methods:
+        _get_content():
+            Fetches the content from the page URL and parses it using the configured parser.
+            Returns the parsed text content or None if parsing fails.
+        _get_content_hash(content):
+            Computes and returns the SHA-256 hash of the given content string.
+        _make_notifiers_from_config(notification_config):
+            Instantiates Notifier objects based on the provided Notification Configuration list.
+        check_for_content_update(latest_persisted_hash, latest_persisted_content):
+            Checks the page for content updates by comparing the current content hash with the latest persisted hash.
+            If content has changed, notifies all configured Notifiers and returns a PageContent object with the update details.
+            If no change is detected, returns a PageContent object indicating no update.
+            On first run, saves the initial content and notifies all configured notifiers.
+    """
     page: Page = field(default_factory=Page)
     parser: ParserBase = field(default_factory=ParserBase)
     last_hash: Optional[str] = None

@@ -8,7 +8,18 @@ from .base_parser import ParserBase
 
 class AllDocumentParser(ParserBase):
     """
-    Extracts the whole HTML document
+    AllDocumentParser is a parser class that extracts the <body> content from an HTML document.
+    Methods
+    -------
+    __init__():
+        Initializes the AllDocumentParser instance.
+    parse(text_to_parse: str) -> Any | None:
+        Parses the given HTML text and returns the content of the <body> tag if present.
+        Returns None if the <body> tag is not found.
+        Parameters:
+            text_to_parse (str): The HTML text to be parsed.
+        Returns:
+            Any | None: The parsed <body> content or None if not found.
     """
     
     def __init__(self):
@@ -25,10 +36,26 @@ class AllDocumentParser(ParserBase):
                 return None
             
 
-class MainElementParser(ParserBase):
+class MainElementParser(ParserBase):  
     """
-    Extracts only the part of HTML document that it's within <main></main> part
-    """    
+    MainElementParser extracts the <main> HTML element from a given HTML string.
+    This parser uses BeautifulSoup to parse the input HTML and searches for the first <main> element.
+    If found, it returns the BeautifulSoup Tag object representing the <main> element; otherwise, it returns None.
+    Methods
+    -------
+    __init__():
+        Initializes the MainElementParser instance.
+    parse(text_to_parse: str) -> Any | None:
+        Parses the provided HTML string and returns the <main> element if present, else None.
+    Parameters
+    ----------
+    text_to_parse : str
+        The HTML content to be parsed.
+    Returns
+    -------
+    Any | None
+        The <main> element as a BeautifulSoup Tag object if found, otherwise None.
+    """
     
     def __init__(self):
         pass
@@ -47,7 +74,13 @@ class MainElementParser(ParserBase):
 @dataclass
 class DivClassParser(ParserBase):
     """
-    Extracts the <div></div> part of the HTML document that has a given div_class_name class
+    Parses HTML content to extract a <div> element with a specified class name.
+    Attributes:
+        class_name (str): The class name to search for within <div> elements.
+    Methods:
+        parse(text_to_parse: str) -> Any | None:
+            Parses the provided HTML text and returns the first <div> element
+            matching the specified class name. Returns None if no such element is found.
     """
     class_name: str
 

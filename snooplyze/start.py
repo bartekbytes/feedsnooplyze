@@ -10,6 +10,16 @@ from utils import PersistenceLayerSetup
 
 
 def main():
+    """
+    Entry point for the snooplyze application.
+    Parses command-line arguments to determine the run mode ('setup' or 'fetch'),
+    fetch type ('interactive' or 'oneshot'), pooling time, and configuration file path.
+    Loads general, persistence, and notifications configuration from the specified config file.
+
+    Runs the main logic of the application.
+   
+    Prints configuration details, setup status, and fetch progress to the console.
+    """
     parser = argparse.ArgumentParser(
         description="📦 snooplyze",
         epilog="Example usage:\n  snooplyze.py --run-mode [setup|fetch]\n --pooling-time [in seconds]\n --config-file [path to conf]",

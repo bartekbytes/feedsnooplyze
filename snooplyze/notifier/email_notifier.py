@@ -4,6 +4,27 @@ from notifier import Notifier
 
 
 class EmailNotifier(Notifier):
+    """
+    EmailNotifier is a class for sending email notifications about new content updates.
+    Attributes:
+        email_address (str): The sender's email address.
+        email_password (str): The password for the sender's email account.
+        recipients (str): The recipient(s) email address(es).
+        page_name (str): The name of the page being monitored.
+        content_time (str): The timestamp of the new content.
+        page_url (str): The URL of the page being monitored.
+        subject (str): The subject of the email notification.
+    Methods:
+        __init__(email_address, email_password, recipients, page_name, content_time, page_url):
+            Initializes the EmailNotifier with email credentials and page details.
+        set_subject(subject):
+            Sets the subject for the email notification.
+        set_recipients(recipients):
+            Sets the recipients for the email notification.
+        notify(message):
+            Sends an email notification with the provided message and page details.
+            Uses an HTML template for the email body and sends the email via Gmail's SMTP server.
+    """
 
     def __init__(self, email_address: str, email_password: str, recipients: str, page_name: str, content_time: str, page_url: str):
         self.email_address = email_address

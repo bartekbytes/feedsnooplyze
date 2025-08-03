@@ -6,6 +6,33 @@ from page import PageContent
 
 
 class SQLitePersistenceEngine(PersistenceEngine):
+    """
+    SQLitePersistenceEngine provides persistence functionality using a SQLite database.
+    Args:
+        database (str): Path to the SQLite database file.
+    Attributes:
+        database (str): Path to the SQLite database file.
+        connection (sqlite3.Connection or None): Active database connection.
+    Methods:
+        __init__(database: str):
+            Initializes the SQLitePersistenceEngine with the database file path.
+        create_structure(connection):
+            Initializes the database structure by executing SQL from a file.
+            Verifies the existence of the 'PageContent' table.
+            Returns True if the table exists, False otherwise.
+        connect():
+            Establishes a connection to the SQLite database.
+            Sets the 'connection' attribute.
+            Returns the connection object or None if connection fails.
+        add_content(page_name, content_time, content_hash, full_content, added_content):
+            Inserts a new record into the 'PageContent' table.
+        is_content_available(page_name):
+            Checks if any content exists for the given page name.
+            Returns True if content is available, False otherwise.
+        get_latest_by_name(page_name):
+            Retrieves the latest content entry for the specified page name.
+            Returns a PageContent object with the latest data.
+    """
 
     def __init__(self, database : str):
         self.database = database

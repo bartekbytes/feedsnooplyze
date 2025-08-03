@@ -5,6 +5,36 @@ from page import PageContent
 
 
 class MySQLPersistenceEngine(PersistenceEngine):
+    """
+    MySQLPersistenceEngine provides persistence operations for storing and retrieving page content in a MySQL database.
+    Args:
+        host (str): The hostname of the MySQL server.
+        port (str): The port number of the MySQL server.
+        user (str): The username for authentication.
+        password (str): The password for authentication.
+        database (str): The name of the database to use.
+    Attributes:
+        host (str): Hostname of the MySQL server.
+        port (str): Port number of the MySQL server.
+        user (str): Username for authentication.
+        password (str): Password for authentication.
+        database (str): Database name.
+        connection: MySQL connection object.
+    Methods:
+        __init__(host: str, port: str, user: str, password: str, database: str):
+            Initializes the MySQLPersistenceEngine with connection parameters.
+        create_structure(connection) -> bool:
+            Creates the required database structure by executing SQL from a file.
+            Returns True if the structure is created successfully, otherwise False.
+        connect():
+            Establishes a connection to the MySQL database and returns the connection object.
+        add_content(page_name: str, content_time: str, content_hash: str, full_content: str, added_content: str):
+            Inserts new page content into the database.
+        is_content_available(page_name: str) -> bool:
+            Checks if content for the specified page name exists in the database.
+        get_latest_by_name(page_name: str) -> PageContent:
+            Retrieves the latest content entry for the specified page name.
+    """
 
     def __init__(self, host: str, port: str, user: str, password: str, database: str):
         self.host = host

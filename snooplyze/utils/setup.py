@@ -2,6 +2,9 @@
 from persistence import PersistenceEngineType
 
 class PersistenceLayerSetup:
+    """
+    Handles the setup and initialization of the persistence layer for various database engines.
+    """
     
     def __init__(self, persistence_engine_type : PersistenceEngineType):
         self.persistence_engine_type = persistence_engine_type or PersistenceEngineType()
