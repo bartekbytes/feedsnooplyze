@@ -7,9 +7,10 @@ class NotifierType(str, Enum):
     CONSOLE = "CONSOLE"
     FLATFILE = "FLATFILE"
     EMAIL = "EMAIL"
+    TELEGRAM = "TELEGRAM"
 
 
-class Notifier(ABC):
+class Notifier():
     def __init__(self):
         self.subscribers = []
     

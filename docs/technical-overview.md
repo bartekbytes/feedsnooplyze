@@ -455,6 +455,8 @@ When enabled, this notifier sends notifications directly to the console output:
 
 ⚠️ Currently, only **Gmail** accounts are supported. A more generic email support is under development.
 
+⚠️ In order to setup **Gmail** account and obtain a 16-digit code user for authentication, please read [GMail Setup Instruction](gmail-setup.md).
+
 This notifier requires **three arguments**:
 
 - `email_address`: Gmail address from which the email will be sent.
@@ -473,11 +475,9 @@ NotificationConfig:
 
 #### Output
 
-Once enabled, this notifier sends an email notification to all specified `recipients`.
+When enabled, this notifier sends a Notification Email to a given Recipients:
 
-Email Example:
-
-![Flat File Notifier - Example of an Email](media/notifier_email_email_example.png)
+![Email Notifier - Example of a received Email](media/notifier_email_output_example.png)
 
 ### Flat File Notifier
 
@@ -505,7 +505,34 @@ Each entry in the file follows this structure:
 
 Extract from the File (example):
 
-![Flat File Notifier - Example of a Flat File](media/notifier_flatfile_file_example.png)
+![Flat File Notifier - Example of a Flat File](media/notifier_flatfile_output_example.png)
+
+### Telegram Notifier
+
+#### Setup
+
+⚠️ In order to setup **Telegram Bot** account and obtain all the necessary configuration for authentication and sending messages,
+please read [Telegram Bot Setup Instruction](telegram-setup.md).
+
+This notifier requires **two arguments**:
+
+- `token`: Token of your created **Telegram Bot**
+- `chat_id`: Id of your **Chat** with your created **Telegram Bot**
+
+Example configuration:
+
+```yaml
+NotificationConfig:
+  - notification_type: telegram
+    token: Token of your created Telegram Bot
+    chat_id: id of your Chat with your created Bot
+```
+
+#### Output
+
+Once enabled, this notifier sends a Telegram message to the **Telegram Bot** specified during setup:
+
+![Telegram Notifier - Example of a received Message](media/notifier_telegram_output_example.png)
 
 # Main modes and their logic
 

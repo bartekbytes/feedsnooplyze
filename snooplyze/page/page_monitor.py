@@ -39,9 +39,18 @@ class PageMonitor:
                 print("❌ No Content or Content could not be parsed")
                 return None
             
-        except Exception as e:
+        except requests.exceptions.HTTPError as e: # HTTPError is raised for 4xx and 5xx responses
             print(f"❌ Error fetching {self.page.url}: {e}")
-            return None
+            print(f"HTTPError. Error: {e}")
+        except requests.exceptions.RequestException as e: # All other request-related errors, includes connection errors, timeout errors, etc.
+            print(f"❌ Error fetching {self.page.url}: {e}")
+            print(f"RequestException. Error: {e}")
+        except Exception as e: # Other exceptions that might occur
+            print(f"❌ Error fetching {self.page.url}: {e}")
+            print("Other error occurred:", e)
+
+
+
 
 
     def _get_content_hash(self, content):

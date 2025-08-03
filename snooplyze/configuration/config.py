@@ -68,6 +68,10 @@ class EmailNotificationConfig(NotificationConfigBase):
     email_password: str
     recipients: str
 
+@dataclass
+class TelegramNotificationConfig(NotificationConfigBase):
+    token: str
+    chat_id: str
 
 
 
@@ -123,6 +127,11 @@ class ConfigLoader:
                 email_address=data["email_address"],
                 email_password=data["email_password"],
                 recipients=data["recipients"]
+            )
+        elif type_ == NotifierType.TELEGRAM:
+            return TelegramNotificationConfig(
+                token=data["token"],
+                chat_id=data["chat_id"]
             )
         else:
             raise ValueError(f"Unsupported notification type: {type_.upper()}")

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.16] - 2025-08-03
+
+### Changes
+
+- **Telegram** Notification added [#14]
+  - All the logic needed:
+  - Configuration
+  - Creation of Notification
+  - Sending mechanism
+  - Instructions (`technical-overview.md` updated; `telegram-setup.md` created)
+- Enhancements for error capture when HTTP Request (`request`) is send.
+- `gmail-setup.md` Instruction added (how to obtain App Password).
+
 ## [0.1.15] - 2025-08-03
 
 ### Changes
