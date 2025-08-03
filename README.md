@@ -242,7 +242,7 @@ Below is a list of all **command-line arguments** supported by the application:
 - ✅ Flat File Notification
 - ✅Email Notification
   - ✅ Email Template
-- 🚧 Telegram Notification
+- ✅ Telegram Notification
 - ⏳ Slack Notification
 - ⏳ Discord Notification
 - ⏳ WhatsApp Notification
