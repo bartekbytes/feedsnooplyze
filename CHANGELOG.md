@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
-- Add docstring for classess, enums, methods, ...
+- Add docstring for classess, enums, methods, ... [#15]
 
 ## [0.1.16] - 2025-08-03
 
