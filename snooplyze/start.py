@@ -1,5 +1,7 @@
 import argparse, sys
 import time
+from datetime import datetime
+
 
 # import snooplyze modules
 from parser import *
@@ -146,10 +148,13 @@ def main():
             
             while True:
                 
-                
+                # Get date and time as of now and format it to a human-readable string
+                now = datetime.now()
+                formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+
                 print("\n------------------")
-                print(f"- 📥 Fetching data ({args.fetch_type} mode)... Loop counter: {loop_counter}")
-                print("-------------------\n")
+                print(f"- 📥 Fetching data ({args.fetch_type} mode) at {formatted_time} (Loop counter: {loop_counter})...")
+                print("------------------\n")
 
                 # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:

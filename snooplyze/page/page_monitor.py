@@ -45,12 +45,12 @@ class PageMonitor:
         
         try:
         
-            print(f"🚀 Request to a given URL {self.page.url} has been sent")
+            print(f"🚀 Request to a given URL [{self.page.url}] has been sent")
             response = requests.get(self.page.url, timeout=60)
             response.raise_for_status()
             
             # Parse obtained text from the URL based on the configured Parser
-            print(f"📜 Parsing using {self.parser.__class__.__name__} parser") 
+            print(f"📜 Parsing using [{self.parser.__class__.__name__}] parser") 
             content = self.parser.parse(response.text)
             
             if content:
@@ -117,7 +117,7 @@ class PageMonitor:
                 
                 now = datetime.now()
 
-                print(f"✅ Content has changed, current hash: {current_hash}, last hash: {latest_persisted_hash}")
+                print(f"✅ Content has changed, current hash [{current_hash}], last hash [{latest_persisted_hash}]")
                 self.last_hash = current_hash
 
                 # Instantiate ContentComparer, compare a new and old content and get only added content
@@ -146,7 +146,7 @@ class PageMonitor:
                 
             self.last_hash = current_hash
 
-            print(f"✅ Initial content saved, hash: {self.last_hash}")
+            print(f"✅ Initial content saved, hash: [{self.last_hash}]")
 
             # Create Notifiers for NotificationConfig
             notifiers_list = self._make_notifiers_from_config(self.notifiers)
