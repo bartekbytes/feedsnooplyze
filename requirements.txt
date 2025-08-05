@@ -5,3 +5,4 @@ pyyaml
 pydantic
 psycopg[binary]
 mysql-connector-python
+pytest

@@ -4,11 +4,11 @@ from datetime import datetime
 
 
 # import snooplyze modules
-from parser import *
-from persistence import PersistenceEngineType
-from configuration.config import ConfigLoader, ConfigReader
-from configuration.pages_config import PagesConfigReader, PagesConfigLoader
-from utils import PersistenceLayerSetup
+from snooplyze.parser import *
+from snooplyze.persistence import PersistenceEngineType
+from snooplyze.configuration.config import ConfigLoader, ConfigReader
+from snooplyze.configuration.pages_config import PagesConfigReader, PagesConfigLoader
+from snooplyze.utils import PersistenceLayerSetup
 
 
 def main():
@@ -46,7 +46,7 @@ def main():
         parser.error("When run-mode is 'fetch', fetch-type must be provided")
 
     # Read app config file
-    cr = ConfigReader(r"../config.yaml") # expecting a config file here with this name
+    cr = ConfigReader(r"config.yaml") # expecting a config file here with this name
     cl = ConfigLoader(reader=cr)
     general_config, persistence_config, notifications_config = cl.load_config() # Get all 3 types of Config: general, persistence and notifications
 
@@ -104,19 +104,19 @@ def main():
         persistence_engine = None
 
         if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            from persistence import DuckDbPersistenceEngine
+            from snooplyze.persistence import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=persistence_config.db_file_path)
         
         elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
-            from persistence import SQLitePersistenceEngine
+            from snooplyze.persistence import SQLitePersistenceEngine
             persistence_engine = SQLitePersistenceEngine(database=persistence_config.db_file_path)
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            from persistence import PostgreSQLPersistenceEngine
+            from snooplyze.persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
-            from persistence import MySQLPersistenceEngine
+            from snooplyze.persistence import MySQLPersistenceEngine
             persistence_engine = MySQLPersistenceEngine(
                 host=persistence_config.host,
                 port=persistence_config.port,
