@@ -1,6 +1,6 @@
 import smtplib
 from email.message import EmailMessage
-from notifier import Notifier
+from snooplyze.notifier import Notifier
 
 
 class EmailNotifier(Notifier):

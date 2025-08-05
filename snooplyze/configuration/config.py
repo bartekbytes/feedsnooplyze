@@ -3,8 +3,8 @@ from abc import ABC
 from typing import Optional
 import yaml
 
-from persistence import PersistenceEngineType
-from notifier import NotifierType
+from snooplyze.persistence import PersistenceEngineType
+from snooplyze.notifier import NotifierType
 
 
 ### General Config Classess
@@ -110,7 +110,7 @@ class ConfigLoader:
                                 database=data["database"]
                                )
         else:
-            raise ValueError(f"Unsupported persistence type: {type_.upper()}")
+            raise ValueError(f"Unsupported persistence type: {type.upper()}")
 
 
     def _create_notification_config(self, data: dict) -> NotificationConfigBase:

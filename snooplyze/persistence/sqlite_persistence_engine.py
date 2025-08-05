@@ -1,7 +1,7 @@
 import sqlite3
 
 from .base_persistence_engine import PersistenceEngine
-from page import PageContent
+from snooplyze.page import PageContent
 
 
 

@@ -1,7 +1,7 @@
 import psycopg
 
 from .base_persistence_engine import PersistenceEngine
-from page import PageContent
+from snooplyze.page import PageContent
 
 
 class PostgreSQLPersistenceEngine(PersistenceEngine):

@@ -1,4 +1,4 @@
-from notifier import Notifier
+from snooplyze.notifier import Notifier
 
 class ConsoleNotifier(Notifier):
     """

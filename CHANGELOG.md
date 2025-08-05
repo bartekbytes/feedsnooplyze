@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.19] - 2025-08-05
+
+### Changes
+
+- Make the codebase modular [#17]
+- Add `pytest` testing engine and some first tests [#19]
+
 ## [0.1.18] - 2025-08-03
 
 ### Changes

@@ -5,11 +5,11 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 # snooplyze modules
-from page import Page, PageContent
-from parser import ParserBase
-from utils import ContentComparer
-from configuration.config import NotificationConfigBase
-from notifier import *
+from snooplyze.page import Page, PageContent
+from snooplyze.parser import ParserBase
+from snooplyze.utils.content_comparer import ContentComparer
+from snooplyze.configuration.config import NotificationConfigBase
+from snooplyze.notifier import *
 
 
 @dataclass
@@ -137,7 +137,7 @@ class PageMonitor:
         
             elif current_hash == latest_persisted_hash:
                 
-                print("⚠️ No change detected.")
+                print("⚠️ No changes detected.")
 
                 now = datetime.now()
                 return PageContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)

@@ -2,8 +2,8 @@ from dataclasses import dataclass
 import yaml
 
 # import snooplyze modules
-from page import PageMonitor, Page
-from parser import ParserType, get_parser, DivClassParser
+from snooplyze.page import PageMonitor, Page
+from snooplyze.parser import ParserType, get_parser, DivClassParser
 
 
 @dataclass

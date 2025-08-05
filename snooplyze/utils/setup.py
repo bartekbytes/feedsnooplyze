@@ -1,5 +1,5 @@
 # import persistence module
-from persistence import PersistenceEngineType
+from snooplyze.persistence import PersistenceEngineType
 
 class PersistenceLayerSetup:
     """
@@ -38,7 +38,7 @@ class PersistenceLayerSetup:
             # duckdb.duckdb.IOException: IO Error: File is already open in
             # duckdb.duckdb.CatalogException: Catalog Error: Table with name "content" already exists! 
             PERSISTENCE_ENGINE_NAME = PersistenceEngineType.DUCKDB.value
-            from persistence import DuckDbPersistenceEngine
+            from snooplyze.persistence import DuckDbPersistenceEngine
             pe = DuckDbPersistenceEngine(database=self.db_name)
             pe_connection = pe.connect()
             
@@ -83,7 +83,7 @@ class PersistenceLayerSetup:
 
         if self.persistence_engine_type == PersistenceEngineType.SQLITE:
             PERSISTENCE_ENGINE_NAME = PersistenceEngineType.SQLITE.value
-            from persistence import SQLitePersistenceEngine
+            from snooplyze.persistence import SQLitePersistenceEngine
             pe = SQLitePersistenceEngine(database=self.db_name)
             pe_connection = pe.connect()
             
@@ -129,7 +129,7 @@ class PersistenceLayerSetup:
         elif self.persistence_engine_type == PersistenceEngineType.POSTGRESQL:
             PERSISTENCE_ENGINE_NAME = PersistenceEngineType.POSTGRESQL.value
             # add try here 
-            from persistence import PostgreSQLPersistenceEngine
+            from snooplyze.persistence import PostgreSQLPersistenceEngine
             pe = PostgreSQLPersistenceEngine(connection_string=self.set_connection_string)
             pe_connection = pe.connect()
             
@@ -174,7 +174,7 @@ class PersistenceLayerSetup:
         elif self.persistence_engine_type == PersistenceEngineType.MYSQL:
             PERSISTENCE_ENGINE_NAME = PersistenceEngineType.MYSQL.value
             # add try here 
-            from persistence import MySQLPersistenceEngine
+            from snooplyze.persistence import MySQLPersistenceEngine
             pe = MySQLPersistenceEngine(
                 host=self.host,
                 port=self.port,
