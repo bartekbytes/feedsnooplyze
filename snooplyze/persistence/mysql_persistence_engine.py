@@ -45,7 +45,7 @@ class MySQLPersistenceEngine(PersistenceEngine):
         self.connection = None
 
     def create_structure(self, connection) -> bool:
-        with open(file=r"persistence/mysql/scripts/structure.sql", mode="r") as f:
+        with open(file=r"snooplyze/persistence/mysql/scripts/structure.sql", mode="r") as f:
             cont = f.read()
         
         if cont:

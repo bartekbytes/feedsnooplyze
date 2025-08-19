@@ -38,7 +38,7 @@ class DuckDbPersistenceEngine(PersistenceEngine):
         self.connection = None
 
     def create_structure(self, connection):
-        with open(file=r"persistence/duckdb/scripts/structure.sql", mode="r") as f:
+        with open(file=r"snooplyze/persistence/duckdb/scripts/structure.sql", mode="r") as f:
             cont = f.read()
 
         if cont:

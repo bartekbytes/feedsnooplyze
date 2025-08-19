@@ -13,7 +13,7 @@ WORKDIR /app
 # Copy the application files
 # Assuming 'snooplyze' is the main application directory
 COPY ./snooplyze /app/snooplyze
-COPY config.yaml requirements.txt /app
+COPY requirements.txt /app
 
 # Create and activate virtualenv, then install dependencies
 # Use the virtual environment to isolate dependencies
