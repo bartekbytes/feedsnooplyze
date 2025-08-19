@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: feedsnooplyze
+Version: 0.1.21
+Summary: A nice app to update you with the new content of the pages you subscribe.
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+Requires-Dist: bs4
+Requires-Dist: duckdb
+Requires-Dist: pyyaml
+Requires-Dist: pydantic
+Requires-Dist: psycopg[binary]
+Requires-Dist: mysql-connector-python
+Requires-Dist: pytest
+
 # FeedSnooplyze
 
 ## 🚧 Work in Progress

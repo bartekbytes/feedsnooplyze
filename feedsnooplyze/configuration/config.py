@@ -3,8 +3,8 @@ from abc import ABC
 from typing import Optional
 import yaml
 
-from snooplyze.persistence import PersistenceEngineType
-from snooplyze.notifier import NotifierType
+from feedsnooplyze.persistence import PersistenceEngineType
+from feedsnooplyze.notifier import NotifierType
 
 
 ### General Config Classess

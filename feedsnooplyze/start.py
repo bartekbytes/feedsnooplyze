@@ -3,17 +3,17 @@ import time
 from datetime import datetime
 
 
-# import snooplyze modules
-from snooplyze.parser import *
-from snooplyze.persistence import PersistenceEngineType
-from snooplyze.configuration.config import ConfigLoader, ConfigReader
-from snooplyze.configuration.pages_config import PagesConfigReader, PagesConfigLoader
-from snooplyze.utils import PersistenceLayerSetup
+# import feedsnooplyze modules
+from feedsnooplyze.parser import *
+from feedsnooplyze.persistence import PersistenceEngineType
+from feedsnooplyze.configuration.config import ConfigLoader, ConfigReader
+from feedsnooplyze.configuration.pages_config import PagesConfigReader, PagesConfigLoader
+from feedsnooplyze.utils import PersistenceLayerSetup
 
 
 def main():
     """
-    Entry point for the snooplyze application.
+    Entry point for the feedsnooplyze application.
     Parses command-line arguments to determine the run mode ('setup' or 'fetch'),
     fetch type ('interactive' or 'oneshot'), pooling time, and configuration file path.
     Loads general, persistence, and notifications configuration from the specified config file.
@@ -23,11 +23,11 @@ def main():
     Prints configuration details, setup status, and fetch progress to the console.
     """
     parser = argparse.ArgumentParser(
-        description="📦 snooplyze",
-        epilog="Example usage:\n  snooplyze.py --run-mode [setup|fetch]\n --pooling-time [in seconds]\n --config-file [path to conf]",
+        description="📦 FeedSnooplyze",
+        epilog="Example usage:\n  feedsnooplyze --run-mode [setup|fetch]\n --pooling-time [in seconds]\n --config-file [path to conf]",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("-r", "--run-mode", type=str, choices=["setup", "fetch"], required=True, help="Run mode of snooplyze: setup or fetch")
+    parser.add_argument("-r", "--run-mode", type=str, choices=["setup", "fetch"], required=True, help="Run mode of feedsnooplyze: setup or fetch")
     parser.add_argument("-ft", "--fetch-type", type=str, choices=["interactive", "oneshot"], required=False, help="Fetch type: interactive in console, oneshot run from external orchestrator")
     parser.add_argument("-p", "--pooling-time", type=int, help="When fetch-type is interactive, how often to pool data")
     parser.add_argument("-f", "--config-file", type=str, help="Path to configuration file")
@@ -104,19 +104,19 @@ def main():
         persistence_engine = None
 
         if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            from snooplyze.persistence import DuckDbPersistenceEngine
+            from feedsnooplyze.persistence import DuckDbPersistenceEngine
             persistence_engine = DuckDbPersistenceEngine(database=persistence_config.db_file_path)
         
         elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
-            from snooplyze.persistence import SQLitePersistenceEngine
+            from feedsnooplyze.persistence import SQLitePersistenceEngine
             persistence_engine = SQLitePersistenceEngine(database=persistence_config.db_file_path)
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            from snooplyze.persistence import PostgreSQLPersistenceEngine
+            from feedsnooplyze.persistence import PostgreSQLPersistenceEngine
             persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)
 
         elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
-            from snooplyze.persistence import MySQLPersistenceEngine
+            from feedsnooplyze.persistence import MySQLPersistenceEngine
             persistence_engine = MySQLPersistenceEngine(
                 host=persistence_config.host,
                 port=persistence_config.port,

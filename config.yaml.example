@@ -1,26 +1,26 @@
-# Snooplyze Configuration Example
-# This is an example configuration file for snooplyze.
-# This file is used to define the general configuration, persistence settings, and notification settings for snooplyze.
+# FeedSnooplyze Configuration Example
+# This is an example configuration file for FeedSnooplyze.
+# This file is used to define the general configuration, persistence settings, and notification settings for FeedSnooplyze.
 # Uncomment and modify the sections below to suit your needs.
 
 # The following sections are included::
-# - GeneralConfig: General settings for snooplyze (mandatory)
+# - GeneralConfig: General settings for FeedSnooplyze (mandatory)
 # - PersistenceConfig: Settings for the persistence engine (e.g., PostgreSQL, DuckDB) (mandatory)
 # - NotificationConfig: Settings for notifications (e.g., console, flatfile, email, telegram) (optional)
 
 
 
 
-# Uncomment and modify the section below to set general configuration options for snooplyze.
+# Uncomment and modify the section below to set general configuration options for FeedSnooplyze.
 # You can set the pooling time, which is the time in seconds between each polling of the pages.
-# This is useful for controlling how often snooplyze checks for updates on the monitored pages
+# This is useful for controlling how often FeedSnooplyze checks for updates on the monitored pages
 #GeneralConfig:
 #  pooling_time: 60 # Time in seconds between each polling of the pages
 
 
 
 
-# Uncomment and modify the section below to set up persistence for snooplyze.
+# Uncomment and modify the section below to set up persistence for FeedSnooplyze.
 # You can choose to use PostgreSQL, DuckDB, SQLite, or MySQL as the persistence engine.
 # Each persistence engine requires specific configuration parameters such as connection string, database file path, or host and port.
 #PersistenceConfig:
@@ -49,7 +49,7 @@
 
 
 # NotificationConfig:
-# Uncomment and modify the section below to set up notifications for snooplyze.
+# Uncomment and modify the section below to set up notifications for FeedSnooplyze.
 # You can choose to receive notifications via console, flatfile, email, or telegram.
 # Each notification type can be configured with specific parameters such as file path, email address, or token.
 # You can have multiple notification types configured at the same time.

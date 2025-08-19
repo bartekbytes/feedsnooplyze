@@ -1,6 +1,6 @@
 import smtplib
 from email.message import EmailMessage
-from snooplyze.notifier import Notifier
+from feedsnooplyze.notifier import Notifier
 
 
 class EmailNotifier(Notifier):
@@ -61,7 +61,7 @@ class EmailNotifier(Notifier):
 
         # Create the message
         msg = EmailMessage()
-        msg['Subject'] = f"[Snooplyze] New content for Page: {self.page_name} at {self.content_time}"
+        msg['Subject'] = f"[FeedSnooplyze] New content for Page: {self.page_name} at {self.content_time}"
         msg['From'] = self.email_address
         msg['To'] = self.recipients
         #msg['To'] = ', '.join(['user1@example.com', 'user2@example.com'])

@@ -3,3 +3,5 @@ persistence/
 
 .git/
 .gitignore
+
+.pytest_cache

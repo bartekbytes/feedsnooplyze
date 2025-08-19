@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.21] - 2025-08-19
+
+### Changes
+
+- Changing Project name from `snooplyze` to `feedsnooplyze` [#21]
+
 ## [0.1.20] - 2025-08-05
 
 ### Changes

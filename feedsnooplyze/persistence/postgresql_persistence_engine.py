@@ -1,7 +1,7 @@
 import psycopg
 
 from .base_persistence_engine import PersistenceEngine
-from snooplyze.page import PageContent
+from feedsnooplyze.page import PageContent
 
 
 class PostgreSQLPersistenceEngine(PersistenceEngine):
@@ -30,7 +30,7 @@ class PostgreSQLPersistenceEngine(PersistenceEngine):
         self.connection = None
 
     def create_structure(self, connection) -> bool:
-        with open(file=r"snooplyze/persistence/postgresql/scripts/structure.sql", mode="r") as f:
+        with open(file=r"feedsnooplyze/persistence/postgresql/scripts/structure.sql", mode="r") as f:
             cont = f.read()
         
         if cont:

@@ -1,5 +1,5 @@
 import pytest
-from snooplyze.utils.content_comparer import ContentComparer
+from feedsnooplyze.utils.content_comparer import ContentComparer
 
 def test_get_difference_added_words():
     comparer = ContentComparer("The quick brown fox jumps", "The quick brown fox")

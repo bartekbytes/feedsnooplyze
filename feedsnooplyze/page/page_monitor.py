@@ -4,12 +4,12 @@ from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional, List
 
-# snooplyze modules
-from snooplyze.page import Page, PageContent
-from snooplyze.parser import ParserBase
-from snooplyze.utils.content_comparer import ContentComparer
-from snooplyze.configuration.config import NotificationConfigBase
-from snooplyze.notifier import *
+# feedsnooplyze modules
+from feedsnooplyze.page import Page, PageContent
+from feedsnooplyze.parser import ParserBase
+from feedsnooplyze.utils.content_comparer import ContentComparer
+from feedsnooplyze.configuration.config import NotificationConfigBase
+from feedsnooplyze.notifier import *
 
 
 @dataclass

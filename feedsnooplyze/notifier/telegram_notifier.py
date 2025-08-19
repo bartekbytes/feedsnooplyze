@@ -1,5 +1,5 @@
 import requests
-from snooplyze.notifier import Notifier
+from feedsnooplyze.notifier import Notifier
 
 
 class TelegramNotifier(Notifier):
@@ -33,7 +33,7 @@ class TelegramNotifier(Notifier):
         url = f"https://api.telegram.org/bot{self.token}/sendMessage"
         payload = {
             "chat_id": self.chat_id,
-            "text": f"Snooplyze - New Content\n{self.page_name} - {self.content_time}\n{self.page_url}\n\n{message}"
+            "text": f"FeedSnooplyze - New Content\n{self.page_name} - {self.content_time}\n{self.page_url}\n\n{message}"
         }
 
         try:

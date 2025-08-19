@@ -1,8 +1,8 @@
 import pytest
 from bs4 import BeautifulSoup
-from snooplyze.parser.generic_parsers import AllDocumentParser
-from snooplyze.parser.generic_parsers import DivClassParser
-from snooplyze.parser.generic_parsers import MainElementParser
+from feedsnooplyze.parser.generic_parsers import AllDocumentParser
+from feedsnooplyze.parser.generic_parsers import DivClassParser
+from feedsnooplyze.parser.generic_parsers import MainElementParser
 
 @pytest.fixture
 def parser():

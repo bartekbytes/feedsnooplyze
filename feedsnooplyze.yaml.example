@@ -1,6 +1,6 @@
-# snooplyze.yaml.example
-# Example Pages Configuration File for snooplyze.
-# This file is used to define the pages that snooplyze will monitor.
+# feedsnooplyze.yaml.example
+# Example Pages Configuration File for FeedSnooplyze.
+# This file is used to define the pages that FeedSnooplyze will monitor.
 # Each page can have a name, URL, description, and a parser configuration.
 # Uncomment and modify the sections below to add your own pages.
 

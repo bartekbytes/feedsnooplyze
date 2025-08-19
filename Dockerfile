@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Copy the application files
 # Assuming 'snooplyze' is the main application directory
-COPY ./snooplyze /app/snooplyze
+COPY ./feedsnooplyze /app/feedsnooplyze
 COPY requirements.txt /app
 
 # Create and activate virtualenv, then install dependencies
@@ -22,7 +22,7 @@ RUN python3 -m venv /app/venv \
  && pip install --no-cache-dir -r requirements.txt
 
 # Ensure the application files are executable
-RUN chmod -R a+rx /app/snooplyze
+RUN chmod -R a+rx /app/feedsnooplyze
 
 # Run th app!
-ENTRYPOINT ["/app/venv/bin/python", "-m", "snooplyze"]
+ENTRYPOINT ["/app/venv/bin/python", "-m", "feedsnooplyze"]

@@ -1,6 +1,6 @@
-# 🧠 Snooplyze - Architecture | Components | Logic
+# 🧠 FeedSnooplyze - Architecture | Components | Logic
 
-This document provides a technical deep dive into the structure, components, and logic of the **Snooplyze** application. For a general overview, see [README.md](README.md).
+This document provides a technical deep dive into the structure, components, and logic of the **FeedSnooplyze** application. For a general overview, see [README.md](README.md).
 
 # Basics
 
@@ -16,7 +16,7 @@ This document provides a technical deep dive into the structure, components, and
 project/
 ├── .venv/                     # Virtual environment (ignored by Git)
 ├── docs/                      # Technical and user documentation
-├── snooplyze/                 # Application source code
+├── feedsnooplyze/             # Application source code
 │   ├── configuration/         # Configuration file parsing & validation
 │   ├── notifier/              # Notification systems (file, email, etc.)
 │   ├── page/                  # Page-fetching and interaction logic
@@ -31,32 +31,32 @@ project/
 ├── Dockerfile                 # Docker setup for containerized deployment
 ├── README.md                  # Project overview and basic usage
 ├── requirements.txt           # Python dependencies
-└── snooplyze.yaml.example     # Example config file for Pages content
+└── feedsnooplyze.yaml.example # Example config file for Pages content
 ```
 
 ## Modules Overview
 
-- snooplyze/configuration/ - Reads, validates, and normalizes configuration values from YAML files.
-- snooplyze/notifier/ - Implements notification mechanisms such as Console, Flat File, Email, etc.
-- snooplyze/page/ - Fetches content from web pages and extracts relevant (new) data.
-- snooplyze/parser/ - Parses and extracts content from pages.
-- snooplyze/persistence/ - Persistence engines layer for storing data.
-- snooplyze/utils/ - Contains reusable helper functions and classes shared across modules.
+- feedsnooplyze/configuration/ - Reads, validates, and normalizes configuration values from YAML files.
+- feedsnooplyze/notifier/ - Implements notification mechanisms such as Console, Flat File, Email, etc.
+- feedsnooplyze/page/ - Fetches content from web pages and extracts relevant (new) data.
+- feedsnooplyze/parser/ - Parses and extracts content from pages.
+- feedsnooplyze/persistence/ - Persistence engines layer for storing data.
+- feedsnooplyze/utils/ - Contains reusable helper functions and classes shared across modules.
 
 ## Entry Point 🚀
 
 The app is launched from:
 
 ```python
-snooplyze/start.py
+feedsnooplyze/start.py
 ```
 
 This file loads the configuration, initializes core services, and kicks off the main runtime loop.
 
 The app can be run:
 
-- as a module: `python -m snooplyze <your_arguments>` or
-- after local installation as a Python package (`pip install -e .`): `snooplyze <your_arguments>`
+- as a module: `python -m feedsnooplyze <your_arguments>` or
+- after local installation as a Python package (`pip install -e .`): `feedsnooplyze <your_arguments>`
 
 Definition of the project is in `pyproject.toml` file
 
@@ -130,7 +130,7 @@ Below is a list of all **command-line arguments** supported by the application:
 
 **Pages** are responsible for configuring all the sources from which Content is retrieved and monitored for changes.
 
-All relevant code can be found in the `snooplyze/page` directory and includes:
+All relevant code can be found in the `feedsnooplyze/page` directory and includes:
 
 - `page.py`: Defines ther **Page** entity, characterized by:
   - _name_
@@ -170,7 +170,7 @@ Pages: # Indicates that this is a configuration for Pages
 
 The **Parser** is responsible for processing extracted content to isolate the relevant parts used to detect updates.
 
-All related code is located in the `snooplyze/parser/` folder and includes:
+All related code is located in the `feedsnooplyze/parser/` folder and includes:
 
 - `base_parser.py`: Contains the `ParserBase` class, which all Parsers must inherit, and the `ParserType` enum for _Generic Parsers_.
 - `custom_parsers.py`: Parsers customized for specific **Pages** (details below).
@@ -182,7 +182,7 @@ All parser classes, both **generic** and **custom**, must inherit from the `Pars
 
 Parsing is performed using **web scraping**, specifically leveraging the **Beautiful Soup** (`bs4`) Python library.
 
-The parsing workflow is implemented in the `snooplyze/page/page_monitor.py` file.
+The parsing workflow is implemented in the `feedsnooplyze/page/page_monitor.py` file.
 
 **How it works:**
 
@@ -270,7 +270,7 @@ The **Persistence Layer** is responsible for storing all the **Pages** Content a
 
 **Adding a New Persistence Engine**
 
-All related code is located in the `snooplyze/persistence/` folder.
+All related code is located in the `feedsnooplyze/persistence/` folder.
 
 To add a new Persistence Engine, two steps must be done:
 
@@ -401,7 +401,7 @@ PersistenceConfig:
 
 **Notifications** are used to inform users when content changes are detected on **Pages** they are monitoring.
 
-All related code is located in the `snooplyze/notifier/` folder.
+All related code is located in the `feedsnooplyze/notifier/` folder.
 
 **Adding a New Notifier**
 
