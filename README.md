@@ -23,14 +23,6 @@ A tool that regularly scans selected information sources and alerts me immediate
 
 ## 🗺️ 10,000-Foot Overview
 
-Here’s a high-level overview of how the application works. A more detailed description can be found later in the documentation.
-
-- Relevant websites to scan are defined in a configuration file.
-- The application is run (either on demand or on a schedule):
-  - It gets and compares the current content with the previously stored version:
-    - No changes → no action taken.
-    - New content detected → the new content is extracted, users are notified, and the content is saved to a persistent storage layer.
-
 Here’s a high-level look at how **Snooplyze** works. (For a detailed breakdown, see the full documentation.)
 
 - Relevant websites to monitor are defined in a configuration file.
@@ -177,7 +169,9 @@ Directly
 
 - (Optional) Create and activate a Python virtual environment
 - Install dependencies from `requirements.txt`
-- Run `start.py` with the required arguments (see below)
+- Run:
+  - Run as a module (from the root folder) `python -m snooplyze <your_arguments>` with the required arguments (see below) or
+  - After installing application as a Python package (`pip install -e .`): `snooplyze <your_arguments>` with the required arguments (see below)
 
 Via Docker
 
@@ -240,7 +234,7 @@ Below is a list of all **command-line arguments** supported by the application:
 - ✅ Notificatgion executon logic
 - ✅ Console Notification
 - ✅ Flat File Notification
-- ✅Email Notification
+- ✅ Email Notification
   - ✅ Email Template
 - ✅ Telegram Notification
 - ⏳ Slack Notification

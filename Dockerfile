@@ -23,7 +23,6 @@ RUN python3 -m venv /app/venv \
 
 # Ensure the application files are executable
 RUN chmod -R a+rx /app/snooplyze
-RUN chmod -R a+rx /app/venv
 
 # Run th app!
-CMD ["/app/venv/bin/python", "snooplyze/start.py"]
+ENTRYPOINT ["/app/venv/bin/python", "-m", "snooplyze"]

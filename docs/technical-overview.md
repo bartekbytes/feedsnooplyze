@@ -23,7 +23,7 @@ project/
 │   ├── parser/                # Page parsing and extraction logic
 │   ├── persistence/           # Persistence Layer storage logic
 │   ├── utils/                 # Utility functions and helpers
-│   └── start.py               # Application entry point
+│   └── start.py               # Application main loop
 ├── .dockerignore              # Docker ignore rules
 ├── .gitignore                 # Git ignore rules
 ├── CHANGELOG.md               # Version history and notable changes
@@ -52,6 +52,13 @@ snooplyze/start.py
 ```
 
 This file loads the configuration, initializes core services, and kicks off the main runtime loop.
+
+The app can be run:
+
+- as a module: `python -m snooplyze <your_arguments>` or
+- after local installation as a Python package (`pip install -e .`): `snooplyze <your_arguments>`
+
+Definition of the project is in `pyproject.toml` file
 
 Appropriate **arguments** must be provided during runtime (see section _Arguments_ below).
 
