@@ -1,8 +1,0 @@
-requests
-bs4
-duckdb
-pyyaml
-pydantic
-psycopg[binary]
-mysql-connector-python
-pytest
