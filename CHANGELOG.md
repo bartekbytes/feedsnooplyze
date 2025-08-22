@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-08-22
+
+### Changes
+
+- Introduction of SQLAlchemy as Persistence Layer [#22]
+
 ## [0.1.21] - 2025-08-19
 
 ### Changes
