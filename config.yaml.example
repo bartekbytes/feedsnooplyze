@@ -25,25 +25,34 @@
 # Each persistence engine requires specific configuration parameters such as connection string, database file path, or host and port.
 #PersistenceConfig:
 
-#  # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
-#  persistence: postgresql
-#  connection_string: "dbname=<db_name> user=<user_name> password=<user_password> host=<host_name/ip_address> port=<port_number>"
 
 #  # This is confing for DuckDB - Uncomment if you want to use this Persistence Engine
 #  persistence: duckdb
 #  db_file_path: <path_to_duckdb_file>
 
-#  # This is confing for SQLite - Uncomment if you want to use this Persistence Engine
-#  persistence: sqlite
-#  db_file_path: <path_to_sqlite_file>
 
 #  # This is confing for MySQL - Uncomment if you want to use this Persistence Engine
 #  persistence: mysql
 #  host: <host_name/ip_address>
-#  port: <port_number>
+#  port: "<port_number>"
 #  user: <user_name>
 #  password: <user_password>
 #  database: <db_name>
+
+
+#  # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
+#  persistence: postgresql
+#  host: <host_name/ip_address>
+#  port: "<port_number>"
+#  user: <user_name>
+#  password: <user_password>
+#  database: <db_name>
+
+
+#  # This is confing for SQLite - Uncomment if you want to use this Persistence Engine
+#  persistence: sqlite
+#  db_file_path: <path_to_sqlite_file>
+
 
 
 

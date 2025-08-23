@@ -272,51 +272,24 @@ The **Persistence Layer** is responsible for storing all the **Pages** Content a
 
 All related code is located in the `feedsnooplyze/persistence/` folder.
 
+Persistence Layer and Engine is served via Python package called `SQLAlchemy`(full documentation [here](https://www.sqlalchemy.org/)).
+
 To add a new Persistence Engine, two steps must be done:
 
-1. A new class that inherits from **PersistenceEngine** class must be created and these below methods must be implemented:
+1. A new entry to a dictionary **PersistenceEngineIcon** (`persistence_engine.py`) must be added.
 
-- create_structure: used in **setup** mode, creates a structure for a given Persistence Engine.
-- connect: connects to a Persistence Engine and returns a connection handler.
-- add_content: adds new information about Page's Content.
-- is_content_available: checks if a given Page's Content is already available in the Persistence Storage.
-- get_latest_by_name: get latest Page's Content for a given Page name as a parameter
+2. New type function called `build_<new_persistence>` must be added to `registry.py` file, This function must parse config and return a `create_engine`.
 
-2. New type must be added to **PersistenceEngineType** Enum in **PersistenceEngine** class
+3. A new Persistence Engine must be added to **ENGINE_BUILDERS** (`registry.py`) dictionary in a form of `<persistence_engine_name>: <new_function_from_step2>`
 
-To add a new persistence engine, follow these steps:
-
-1. **Create a new class** that inherits from the `PersistenceEngine` base class and implement the following methods:
-
-- `create_structure`: Used in **setup** mode to create the necessary structure for the persistence engine.
-- `connect`: Connects to the persistence engine and returns a connection handler.
-- `add_content`: Adds new information about a page’s content.
-- `is_content_available`: Checks if a given page’s content already exists in the persistence storage.
-- `get_latest_by_name`: Retrieves the latest content for a given page name.
-
-2. **Add the new type** to the `PersistenceEngineType` enum in the PersistenceEngine class.
-
-Example:
-
-1.
+4. New **Persistence Config Class** must be added to `configuration/config.py` file (secion `Persistence Config Classess`), in a form:
 
 ```python
-class YourNewPersistenceEngine(PersistenceEngine):
-
-    def __init__(self, argument: str):
-    self.argument = file_path
-
-    # All abstract methods from PersistenceEngine class must be implemented
-```
-
-2.
-
-```python
-class PersistenceEngineType(str, Enum):
-    # other Enums that are here ...
-    # ...
-    # ...
-    YOURNEWPERSISTENCEENGINENAME = "YOURNEWPERSISTENCEENGINENAME"
+class NewPersistenceNameConfig(BaseModel):
+  config_parameter1: config_parameter1_type
+  config_parameter2: config_parameter2_type
+  ...
+  config_parameterN: config_parameterN_type
 ```
 
 To enable the Persistence Layer, the appropriate configuration for the persistence engine must be set up in the _Application Configuration File_. Below is an explanation of how each currently implemented persistence engine works and how to configure them.
@@ -369,16 +342,24 @@ PersistenceConfig:
 
 ❗ Before using this engine, a database named `database` must be created manually on the PostgreSQL server.
 
-This persistence engine requires **one argument**:
+This persistence engine requires **five arguments**:
 
-- `connection_string`: Full connection string to the PostgreSQL database.
+- `host`: Hostname or IP address of the MySQL server
+- `port`: Port number (typically 3306)
+- `user`: Username with access to the database
+- `password`: Password for the above user
+- `database`: Name of the target database
 
 Example configuration:
 
 ```yaml
 PersistenceConfig:
   persistence: postgresql
-  connection_string: "dbname=your_db_name user=user_name password=password_for_user host=name_or_ip_address_of_postgresql_engine port=port_of_postgresql_engine"
+  host: postgresql_host
+  port: port_of_postgresql
+  user: user_name
+  password: password_of_the_above
+  database: db_name
 ```
 
 ### 🗃️ SQLite Persistence Engine

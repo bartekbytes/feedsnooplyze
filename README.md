@@ -210,7 +210,7 @@ Below is a list of all **command-line arguments** supported by the application:
 
 - ✅ Basic Persistence Layer logic
 - ✅ Adding first Persistence Engines
-- 🚧 Refactoring the layer to use OOM, like SQL Alchemy (❗ important)
+- ✅ Refactoring the layer to use OOM, like SQLAlchemy
 - ⏳ Adding more Persistence Engines
 
 ## Pages
@@ -223,10 +223,10 @@ Below is a list of all **command-line arguments** supported by the application:
 
 - ✅ Basic Parser configuration via Config File
 - ✅ Basic parsing logic
-- Separation to **Generic** Parsers and **Custom** Parsers
-- Add more **Custom Parsers**
-- Enable ability to write **Custom Parsers** via external config file (as plug-in), not in the code
-- Async and multithreading parsing (to enable parsing multiple Pages simultaniousely)
+- ⏳ Separation to **Generic** Parsers and **Custom** Parsers
+- ⏳ Add more **Custom Parsers**
+- ⏳ Enable ability to write **Custom Parsers** via external config file (as plug-in), not in the code
+- ⏳ Async and multithreading parsing (to enable parsing multiple Pages simultaniousely)
 
 ## Notifications
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "feedsnooplyze"
-version = "0.1.21"
+version = "0.2.0"
 description = "A nice app to update you with the new content of the pages you subscribe."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -12,11 +12,13 @@ dependencies = [
         "requests",
         "bs4",
         "duckdb",
+        "duckdb-engine",
         "pyyaml",
         "pydantic",
         "psycopg[binary]",
         "mysql-connector-python",
         "pytest",
+        "sqlalchemy",
     ]
 
 [project.scripts]

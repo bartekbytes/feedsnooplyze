@@ -5,10 +5,9 @@ from datetime import datetime
 
 # import feedsnooplyze modules
 from feedsnooplyze.parser import *
-from feedsnooplyze.persistence import PersistenceEngineType
+from feedsnooplyze.persistence import get_engine, persistence_setup, PersistenceCommand
 from feedsnooplyze.configuration.config import ConfigLoader, ConfigReader
 from feedsnooplyze.configuration.pages_config import PagesConfigReader, PagesConfigLoader
-from feedsnooplyze.utils import PersistenceLayerSetup
 
 
 def main():
@@ -61,37 +60,14 @@ def main():
         
         print("🔧 Running setup...")
 
-        if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            print(f"... for 🦆 {PersistenceEngineType.DUCKDB.value} Peristence Engine")
-            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.DUCKDB)
-            pe.set_dbname(persistence_config.db_file_path)
-            pe.execute_setup()
-        
-        elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
-            print(f"... for 📁 {PersistenceEngineType.SQLITE.value} Peristence Engine")
-            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.SQLITE)
-            pe.set_dbname(persistence_config.db_file_path)
-            pe.execute_setup()
+        persistence_engine = get_engine(persistence_config)
 
-        elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            print(f"... for 🐘 {PersistenceEngineType.POSTGRESQL.value} Peristence Engine")
-            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.POSTGRESQL)
-            pe.set_connection_string(persistence_config.connection_string)
-            pe.execute_setup()
-
-        elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
-            print(f"... for 🐬 {PersistenceEngineType.MYSQL.value} Peristence Engine")
-            pe = PersistenceLayerSetup(persistence_engine_type=PersistenceEngineType.MYSQL)
-            pe.set_host(persistence_config.host)
-            pe.set_port(persistence_config.port)
-            pe.set_user(persistence_config.user)
-            pe.set_password(persistence_config.password)
-            pe.set_database(persistence_config.database)
-            pe.execute_setup()
-    
+        persistence_setup_result = persistence_setup(persistence_engine, persistence_config)
+        if persistence_setup_result:
+            print("✅ Persistence Layer setup completed successfully!")
         else:
-            print(f"❌ {persistence_config.persistence} is not supported")
-            exit(1)
+            print("❌ Persistence Layer setup failed!")
+            exit(-1)
 
     elif args.run_mode == 'fetch':
             
@@ -101,31 +77,10 @@ def main():
         pages_monitors = pcl.load_config() # parse and load config, return a list of PageMonitor
 
         # Create and Connect to Persistence Engine
-        persistence_engine = None
+        persistence_engine = get_engine(persistence_config)
+        print(persistence_engine)
 
-        if persistence_config.persistence.upper() == PersistenceEngineType.DUCKDB:
-            from feedsnooplyze.persistence import DuckDbPersistenceEngine
-            persistence_engine = DuckDbPersistenceEngine(database=persistence_config.db_file_path)
-        
-        elif persistence_config.persistence.upper() == PersistenceEngineType.SQLITE:
-            from feedsnooplyze.persistence import SQLitePersistenceEngine
-            persistence_engine = SQLitePersistenceEngine(database=persistence_config.db_file_path)
-
-        elif persistence_config.persistence.upper() == PersistenceEngineType.POSTGRESQL:
-            from feedsnooplyze.persistence import PostgreSQLPersistenceEngine
-            persistence_engine = PostgreSQLPersistenceEngine(connection_string=persistence_config.connection_string)
-
-        elif persistence_config.persistence.upper() == PersistenceEngineType.MYSQL:
-            from feedsnooplyze.persistence import MySQLPersistenceEngine
-            persistence_engine = MySQLPersistenceEngine(
-                host=persistence_config.host,
-                port=persistence_config.port,
-                user=persistence_config.user,
-                password=persistence_config.password,
-                database=persistence_config.database)
-        
-        # Try to connect to Persistence Engine
-        if not persistence_engine.connect():
+        if not persistence_engine:
             print("❌ Can't connect to Persistence Engine!")
             exit(1)
 
@@ -146,6 +101,9 @@ def main():
         # Mode how app works, interactive or oneshot
         if args.fetch_type == 'interactive' or args.fetch_type == 'oneshot':
             
+
+            persistence_command = PersistenceCommand(persistence_engine)
+
             while True:
                 
                 # Get date and time as of now and format it to a human-readable string
@@ -162,12 +120,12 @@ def main():
                     pm.notifiers = notifications_config
                 
                     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                    content_available = persistence_engine.is_content_available(page_name=pm.page.name)
+                    content_available = persistence_command.is_content_available(page_name=pm.page.name)
 
                     if content_available:
 
                         # Get the latest PageContent (ordered by ContentTime) for a given Page
-                        page_content = persistence_engine.get_latest_by_name(page_name=pm.page.name)
+                        page_content = persistence_command.get_latest_by_name(page_name=pm.page.name)
 
                         # 2. Check if there is any content change since the last saved content
                         pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
@@ -176,15 +134,15 @@ def main():
                         if pc.page_name:
                     
                             # 3. Add new content to Persistence
-                            persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time, 
-                                                        content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                            persistence_command.add_content(page_name=pc.page_name, content_time=pc.content_time, 
+                                                         content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
                     else:
                         # There is no content stored in Persistence Layer for a given Page,
                         # so execute check for content update with dummy hash and content
                         pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
-                        persistence_engine.add_content(page_name=pc.page_name, content_time=pc.content_time,
-                                                    content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                        persistence_command.add_content(page_name=pc.page_name, content_time=pc.content_time,
+                                                     content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
 
                 # Infinite loop for 'interactive' mode.

@@ -1,42 +1,34 @@
+from pydantic import BaseModel, ValidationError
 from dataclasses import dataclass
 from abc import ABC
-from typing import Optional
+from typing import Dict, Type
 import yaml
 
-from feedsnooplyze.persistence import PersistenceEngineType
+# feedsnooplyze modules
 from feedsnooplyze.notifier import NotifierType
+
+
 
 
 ### General Config Classess
 
 @dataclass
-class GeneralConfig:
+class GeneralConfig():
     pooling_time: int
 
 
 ### Persistence Config Classess
 
-@dataclass
-class PersistenceConfigBase(ABC):
-    persistence: str
-
-@dataclass
-class DuckDBConfig(PersistenceConfigBase):
+class DuckDBConfig(BaseModel):
     persistence: str
     db_file_path: str
 
-@dataclass
-class SQLiteConfig(PersistenceConfigBase):
+
+class SQLiteConfig(BaseModel):
     persistence: str
     db_file_path: str
 
-@dataclass
-class PostgreSQLConfig(PersistenceConfigBase):
-    persistence: str
-    connection_string: str
-
-@dataclass
-class MySQLConfig(PersistenceConfigBase):
+class PostgreSQLConfig(BaseModel):
     persistence: str
     host: str
     port: str
@@ -44,6 +36,21 @@ class MySQLConfig(PersistenceConfigBase):
     password: str
     database: str
 
+class MySQLConfig(BaseModel):
+    persistence: str
+    host: str
+    port: str
+    user: str
+    password: str
+    database: str
+
+
+PERSISTENCE_CONFIG_MODELS: Dict[str, Type[BaseModel]] = {
+    "sqlite": SQLiteConfig,
+    "duckdb": DuckDBConfig,
+    "postgresql": PostgreSQLConfig,
+    "mysql": MySQLConfig,    
+}
 
 
 # Notification Config Classess
@@ -92,25 +99,19 @@ class ConfigLoader:
         return self._parse_config(yaml_str)
     
 
-    def _create_persistence_config(self, data: dict) -> PersistenceConfigBase:
-        type = data.get("persistence").upper()
+    def _create_persistence_config(self, data: dict) -> BaseModel:
+        type = data.get("persistence").lower()
         
-        if type == PersistenceEngineType.POSTGRESQL:
-            return PostgreSQLConfig(persistence=PersistenceEngineType.POSTGRESQL, connection_string=data["connection_string"])
-        elif type == PersistenceEngineType.DUCKDB:
-            return DuckDBConfig(persistence=PersistenceEngineType.DUCKDB, db_file_path=data["db_file_path"])
-        elif type == PersistenceEngineType.SQLITE:
-            return SQLiteConfig(persistence=PersistenceEngineType.SQLITE, db_file_path=data["db_file_path"])
-        elif type == PersistenceEngineType.MYSQL:
-            return MySQLConfig(persistence=PersistenceEngineType.MYSQL, 
-                                host=data["host"],
-                                port=data["port"],
-                                user=data["user"],
-                                password=data["password"],
-                                database=data["database"]
-                               )
-        else:
-            raise ValueError(f"Unsupported persistence type: {type.upper()}")
+        if type not in PERSISTENCE_CONFIG_MODELS:
+            raise ValueError(f"Unsupported persistence type: {type}")
+        
+        model = PERSISTENCE_CONFIG_MODELS[type.lower()]
+
+        try:    
+            return model(**data)
+        except ValidationError as e:
+            raise ValueError(f"Invalid configuration for {type}: {e}")  
+        
 
 
     def _create_notification_config(self, data: dict) -> NotificationConfigBase:
