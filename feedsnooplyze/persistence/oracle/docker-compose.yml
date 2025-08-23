@@ -6,7 +6,7 @@ services:
     container_name: oracle-db
     restart: always
     ports:
-      - "1521:1521" # Default MS SQL Server port
+      - "1521:1521" # Default Oracle port
     environment:
       # Optional. If not set, a random password will be generated and shown on the console
       ORACLE_PWD: "Password for SYS, SYSTEM, PDBADMIN"
