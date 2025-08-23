@@ -213,10 +213,11 @@ Below is a list of all **command-line arguments** supported by the application:
 - ✅ Refactoring the layer to use OOM, like SQLAlchemy
 - ⏳ Adding more Persistence Engines
 
-## Pages
+## Pages / Content Source
 
 - ✅ Basic Page configuration via Config File
 - 🚧 Validation of Pages (Unique name of Page)
+- 🚧 Extend Content Source to RSS (split to have Pages and RSS as sources)
 - ⏳ Adding more Attributes to Pages (and Config File), like Tags
 
 ## Parsers
