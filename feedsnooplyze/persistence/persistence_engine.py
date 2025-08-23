@@ -6,7 +6,8 @@ PersistenceEngineIcon = {
     "SQLITE": "📁",
     "POSTGRESQL": "🐘",
     "MSSQLSERVER": "🛢️",
-    "MYSQL": "🐬"
+    "MYSQL": "🐬",
+    "ORACLE": "🏛️",
 }
 
 

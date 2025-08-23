@@ -48,7 +48,14 @@ def build_mssqlserver_engine(config):
     database = config.database
     return create_engine(f'mssql+pymssql://{user}:{password}@{host}:{port}/{database}')
 
-
+#@register_engine('oracle')
+def build_oracle_engine(config):   
+    user = config.user
+    password = config.password
+    host = config.host
+    port = config.port
+    service_name = config.service_name
+    return create_engine(f'oracle+oracledb://{user}:{password}@{host}:{port}/?service_name={service_name}')
 
 
 ENGINE_BUILDERS = {
@@ -56,5 +63,6 @@ ENGINE_BUILDERS = {
     "sqlite": build_sqlite_engine,
     "postgresql": build_postgresql_engine,
     "mysql": build_mysql_engine,
-    "mssqlserver": build_mssqlserver_engine
+    "mssqlserver": build_mssqlserver_engine,
+    "oracle": build_oracle_engine,
 }

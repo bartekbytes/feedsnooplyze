@@ -1,0 +1,17 @@
+services:
+  # Oracle database
+  oracle_db:
+    image: container-registry.oracle.com/database/free:latest # Oracle 23ai Free Edition (Full Image)
+    # image: container-registry.oracle.com/database/free:latest-lite # Oracle 23ai Free Edition (Lite Image, (~80% image size reduction))
+    container_name: oracle-db
+    restart: always
+    ports:
+      - "1521:1521" # Default MS SQL Server port
+    environment:
+      # Optional. If not set, a random password will be generated and shown on the console
+      ORACLE_PWD: "Password for SYS, SYSTEM, PDBADMIN"
+    volumes:
+      - oracle_db_data:/opt/oracle/oradata # Docker managed volume
+
+volumes:
+  oracle_db_data:

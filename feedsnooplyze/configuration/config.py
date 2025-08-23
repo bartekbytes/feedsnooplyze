@@ -52,13 +52,22 @@ class MsSQLServerConfig(BaseModel):
     password: str
     database: str
 
+class OracleConfig(BaseModel):
+    persistence: str
+    host: str
+    port: str
+    user: str
+    password: str
+    service_name: str
+
 
 PERSISTENCE_CONFIG_MODELS: Dict[str, Type[BaseModel]] = {
     "sqlite": SQLiteConfig,
     "duckdb": DuckDBConfig,
     "postgresql": PostgreSQLConfig,
     "mysql": MySQLConfig,
-    "mssqlserver": MsSQLServerConfig
+    "mssqlserver": MsSQLServerConfig,
+    "oracle": OracleConfig
 }
 
 

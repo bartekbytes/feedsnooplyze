@@ -2,11 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.1] - 2025-08-22
+## [0.2.2] - 2025-08-23
 
 ### Changes
 
-- Add MS SQL Server as a Persistence Engine [#24]
+- Add **Oracle** as a Persistence Engine [#25]
+- Add`docker-compose.yml` for **Oracle**
+- Add `docs/persistence-setup.md` file with all the necessary prerequisites for Persistence Layer Engines
+  - **Oracle** prerequisites instruction added
+
+## [0.2.1] - 2025-08-23
+
+### Changes
+
+- Add **MS SQL Server** as a Persistence Engine [#24]
 - Refactoring Persistence Layer code to use SQLAlchemy Core instead of plain SQL:
   - code is now fully DB Engine agnostic
 - Add`docker-compose.yml` for **MS SQL Server**
@@ -15,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
-- Introduction of SQLAlchemy as Persistence Layer [#22]
+- Introduction of **SQLAlchemy** as Persistence Layer [#22]
 
 ## [0.1.21] - 2025-08-19
 

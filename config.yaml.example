@@ -49,6 +49,15 @@
 #  database: <db_name>
 
 
+#  # This is confing for Oracle - Uncomment if you want to use this Persistence Engine
+#  persistence: oracle
+#  host: <host_name/ip_address>
+#  port: "<port_number>"
+#  user: <user_name>
+#  password: <user_password>
+#  service_name: <service_name>
+
+
 #  # This is confing for PostgreSQL - Uncomment if you want to use this Persistence Engine
 #  persistence: postgresql
 #  host: <host_name/ip_address>
