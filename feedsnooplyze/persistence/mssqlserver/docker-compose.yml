@@ -1,0 +1,19 @@
+services:
+  # MS SQL Server database
+  mssqlserver_db:
+    image: mcr.microsoft.com/mssql/server:2022-latest # MsSQL Server 2022 latest version
+    container_name: mssqlserver-db
+    restart: always
+    ports:
+      - "1433:1433" # Default MS SQL Server port
+    environment:
+      ACCEPT_EULA: "Y"
+      # Requirements for MSSQL_SA_PASSWORD:
+      # "A strong system administrator (SA) password, which must be at least eight (8) characters in length,
+      # including uppercase, lowercase letters, base-10 digits and/or non-alphanumeric symbols.
+      MSSQL_SA_PASSWORD: "YourPassword"
+    volumes:
+      - mssqlserver_db_data:/var/opt/mssql # Docker managed volume
+
+volumes:
+  mssqlserver_db_data:

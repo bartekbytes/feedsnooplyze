@@ -8,3 +8,4 @@ psycopg[binary]
 mysql-connector-python
 pytest
 sqlalchemy
+pymssql

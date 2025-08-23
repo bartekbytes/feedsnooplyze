@@ -44,12 +44,21 @@ class MySQLConfig(BaseModel):
     password: str
     database: str
 
+class MsSQLServerConfig(BaseModel):
+    persistence: str
+    host: str
+    port: str
+    user: str
+    password: str
+    database: str
+
 
 PERSISTENCE_CONFIG_MODELS: Dict[str, Type[BaseModel]] = {
     "sqlite": SQLiteConfig,
     "duckdb": DuckDBConfig,
     "postgresql": PostgreSQLConfig,
-    "mysql": MySQLConfig,    
+    "mysql": MySQLConfig,
+    "mssqlserver": MsSQLServerConfig
 }
 
 

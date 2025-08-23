@@ -39,10 +39,22 @@ def build_mysql_engine(config):
     database = config.database
     return create_engine(f'mysql+mysqlconnector://{user}:{password}@{host}:{port}/{database}')
 
+#@register_engine('mssqlserver')
+def build_mssqlserver_engine(config):   
+    user = config.user
+    password = config.password
+    host = config.host
+    port = config.port
+    database = config.database
+    return create_engine(f'mssql+pymssql://{user}:{password}@{host}:{port}/{database}')
+
+
+
 
 ENGINE_BUILDERS = {
     "duckdb": build_duckdb_engine,
     "sqlite": build_sqlite_engine,
     "postgresql": build_postgresql_engine,
     "mysql": build_mysql_engine,
+    "mssqlserver": build_mssqlserver_engine
 }

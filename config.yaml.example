@@ -31,6 +31,15 @@
 #  db_file_path: <path_to_duckdb_file>
 
 
+#  # This is confing for MSSQLServer - Uncomment if you want to use this Persistence Engine
+#  persistence: mssqlserver
+#  host: <host_name/ip_address>
+#  port: "<port_number>"
+#  user: <user_name>
+#  password: <user_password>
+#  database: <db_name>
+
+
 #  # This is confing for MySQL - Uncomment if you want to use this Persistence Engine
 #  persistence: mysql
 #  host: <host_name/ip_address>

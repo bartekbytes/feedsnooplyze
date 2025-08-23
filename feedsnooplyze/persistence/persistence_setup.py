@@ -1,18 +1,24 @@
-from sqlalchemy import Engine, MetaData, Table, inspect, text
+from sqlalchemy import Engine, MetaData, Table, Column, String, Text, DateTime, inspect, text
 from time import sleep
 
+# feedsnooplyze modules
 from .persistence_engine import PersistenceEngineIcon
 
-sql_script = """
-    CREATE TABLE IF NOT EXISTS page_content
-    (
-        page_name TEXT NOT NULL,
-        content_time TIMESTAMP NOT NULL,
-        content_hash TEXT NOT NULL,
-        full_content TEXT ,
-        added_content TEXT
-    );
-    """
+
+def _create_structure(engine: Engine):
+    metadata = MetaData()
+
+    page_content = Table(
+        'page_content', metadata,
+        Column('page_name', String(100), nullable=False),
+        Column('content_time', DateTime, nullable=False),
+        Column('content_hash', String(100), nullable=False),
+        Column('full_content', Text),
+        Column('added_content', Text)
+    )
+
+    page_content.create(engine)
+
 
 def persistence_setup(engine: Engine, config: dict) -> bool:
     
@@ -37,9 +43,7 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
                 
                 sleep(5)
 
-                with engine.connect() as conn:
-                    conn.execute(text(sql_script))
-                    conn.commit()
+                _create_structure(engine)
 
                 sleep(5)
 
@@ -58,9 +62,7 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
         else:
             print(f"⚠️ Structure does not exist, will be created")
 
-            with engine.connect() as conn:
-                conn.execute(text(sql_script))
-                conn.commit()
+            _create_structure(engine)
 
             sleep(5)
 

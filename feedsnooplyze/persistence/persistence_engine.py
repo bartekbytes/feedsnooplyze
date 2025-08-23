@@ -5,7 +5,7 @@ PersistenceEngineIcon = {
     "DUCKDB": "🦆",
     "SQLITE": "📁",
     "POSTGRESQL": "🐘",
-    "MSSQLSERVER": "🪟",
+    "MSSQLSERVER": "🛢️",
     "MYSQL": "🐬"
 }
 
