@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import yaml
 
 # import feedsnooplyze modules
-from feedsnooplyze.page import PageMonitor, Page
+from feedsnooplyze.sourcer.page import PageMonitor, Page
 from feedsnooplyze.parser import ParserType, get_parser, DivClassParser
 
 
