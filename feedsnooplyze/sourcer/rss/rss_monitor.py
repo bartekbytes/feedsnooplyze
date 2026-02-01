@@ -4,9 +4,10 @@ from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional, List
 
+import feedparser
+
 # feedsnooplyze modules
 from feedsnooplyze.sourcer.rss import RSS, RSSContent
-from feedsnooplyze.parser import ParserBase
 from feedsnooplyze.utils.content_comparer import ContentComparer
 from feedsnooplyze.configuration.config import NotificationConfigBase
 from feedsnooplyze.notifier import *
@@ -36,47 +37,39 @@ class RSSMonitor:
             On first run, saves the initial content and notifies all configured notifiers.
     """
     rss: RSS = field(default_factory=RSS)
-    parser: ParserBase = field(default_factory=ParserBase)
     last_hash: Optional[str] = None
     notifiers: Optional[List[NotificationConfigBase]] = None
-
 
     def _get_content(self):
         
         try:
-        
-            print(f"🚀 Request to a given URL [{self.rss.url}] has been sent")
-            response = requests.get(self.rss.url, timeout=60)
-            response.raise_for_status()
             
-            # Parse obtained text from the URL based on the configured Parser
-            print(f"📜 Parsing using [{self.parser.__class__.__name__}] parser") 
-            content = self.parser.parse(response.text)
-            
-            if content:
-                print(f"✅ Content has been found and parsed successfully")
-                return content.get_text(separator = ' ', strip = True)
-            else:
-                print("❌ No Content or Content could not be parsed")
+            print(f"🚀 Request to a given RSS [{self.rss.url}] has been sent")
+            feed = feedparser.parse(self.rss.url)
+
+            if feed.bozo:
+                print(f"❌ Error parsing RSS feed from {self.rss.url}: {feed.bozo_exception}")
                 return None
-            
-        except requests.exceptions.HTTPError as e: # HTTPError is raised for 4xx and 5xx responses
-            print(f"❌ Error fetching {self.page.url}: {e}")
-            print(f"HTTPError. Error: {e}")
-        except requests.exceptions.RequestException as e: # All other request-related errors, includes connection errors, timeout errors, etc.
-            print(f"❌ Error fetching {self.page.url}: {e}")
-            print(f"RequestException. Error: {e}")
-        except Exception as e: # Other exceptions that might occur
-            print(f"❌ Error fetching {self.page.url}: {e}")
-            print("Other error occurred:", e)
-
-
-
-
+            elif not feed:
+                print(f"❌ No feed data found at {self.rss.url}")
+                return None
+            else:
+                print(f"✅ RSS feed from {self.rss.url} has been parsed successfully")
+                return feed
+        except feedparser.bozo_exception as e:
+            print(f"❌ Error parsing RSS feed from {self.rss.url}: {e}")
+            return None 
 
     def _get_content_hash(self, content):
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
     
+    def get_rss(self):
+        rss = self._get_content()
+        for entry in rss.entries:
+            print(f"Title: {entry.title}")
+            print(f"Link: {entry.link}")
+            print(f"Published: {entry.published}")
+            print(f"Summary: {entry.summary}\n")
 
     def _make_notifiers_from_config(self, notification_config: List[NotificationConfigBase]) -> List[Notifier]:
 

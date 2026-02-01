@@ -10,3 +10,4 @@ pytest
 sqlalchemy
 pymssql
 oracledb
+feedparser

@@ -81,7 +81,7 @@ def main():
 
         print(f"pages_monitors loaded: {pages_monitors}")
         print(f"rss_monitors loaded: {rss_monitors}")
-        
+
         # Create and Connect to Persistence Engine
         persistence_engine = get_engine(persistence_config)
         print(persistence_engine)
@@ -119,6 +119,12 @@ def main():
                 print("\n------------------")
                 print(f"- 📥 Fetching data ({args.fetch_type} mode) at {formatted_time} (Loop counter: {loop_counter})...")
                 print("------------------\n")
+
+                # For now, just show the content of each RSS feed
+                # Full logic to be implemented later
+                for rssm in rss_monitors:
+                    rssm.notifiers = notifications_config
+                    rssm.get_rss()
 
                 # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:

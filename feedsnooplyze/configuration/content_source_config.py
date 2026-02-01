@@ -80,7 +80,7 @@ class ContentSourceConfigLoader:
                 rss_description = item.get('description') # get description element from RSS config (optional element)
 
                 rss = RSS(name=rss_name, url=rss_url, description=rss_description)
-                rss_monitors.append(RSSMonitor(rss=rss, parser=None)) # RSS does not need a parser
+                rss_monitors.append(RSSMonitor(rss=rss))
         
         return ContentSourceConfig(
                     pages_config=page_monitors,
