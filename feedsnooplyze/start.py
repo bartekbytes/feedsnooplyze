@@ -7,7 +7,7 @@ from datetime import datetime
 from feedsnooplyze.parser import *
 from feedsnooplyze.persistence import get_engine, persistence_setup, PersistenceCommand
 from feedsnooplyze.configuration.config import ConfigLoader, ConfigReader
-from feedsnooplyze.configuration.pages_config import PagesConfigReader, PagesConfigLoader
+from feedsnooplyze.configuration.content_source_config import ContentSourceConfigReader, ContentSourceConfigLoader
 
 
 def main():
@@ -72,10 +72,16 @@ def main():
     elif args.run_mode == 'fetch':
             
         # Read Pages config file
-        pcr = PagesConfigReader(args.config_file)
-        pcl = PagesConfigLoader(reader=pcr)
-        pages_monitors = pcl.load_config() # parse and load config, return a list of PageMonitor
+        cscr = ContentSourceConfigReader(args.config_file)
+        cscl = ContentSourceConfigLoader(reader=cscr)
+        monitors = cscl.load_config() # parse and load config, return ContentSourceConfig instance
+        
+        pages_monitors = monitors.pages_config # extract list of PageMonitor from ContentSourceConfig instance
+        rss_monitors = monitors.rsses_config # extract list of RSSMonitor from ContentSourceConfig instance
 
+        print(f"pages_monitors loaded: {pages_monitors}")
+        print(f"rss_monitors loaded: {rss_monitors}")
+        
         # Create and Connect to Persistence Engine
         persistence_engine = get_engine(persistence_config)
         print(persistence_engine)

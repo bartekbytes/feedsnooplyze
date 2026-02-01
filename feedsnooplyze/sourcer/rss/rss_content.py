@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class RssContent:
+class RSSContent:
     """
     Represents the content details of a RSS feed.
 

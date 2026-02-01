@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 # feedsnooplyze modules
-from feedsnooplyze.sourcer.rss import Page, PageContent
+from feedsnooplyze.sourcer.rss import RSS, RSSContent
 from feedsnooplyze.parser import ParserBase
 from feedsnooplyze.utils.content_comparer import ContentComparer
 from feedsnooplyze.configuration.config import NotificationConfigBase
@@ -13,7 +13,7 @@ from feedsnooplyze.notifier import *
 
 
 @dataclass
-class PageMonitor:
+class RSSMonitor:
     """
     Monitors a Web Page for content changes and runs configured Notifications when updates are detected.
     Attributes:
@@ -35,7 +35,7 @@ class PageMonitor:
             If no change is detected, returns a PageContent object indicating no update.
             On first run, saves the initial content and notifies all configured notifiers.
     """
-    page: Page = field(default_factory=Page)
+    rss: RSS = field(default_factory=RSS)
     parser: ParserBase = field(default_factory=ParserBase)
     last_hash: Optional[str] = None
     notifiers: Optional[List[NotificationConfigBase]] = None
@@ -45,8 +45,8 @@ class PageMonitor:
         
         try:
         
-            print(f"🚀 Request to a given URL [{self.page.url}] has been sent")
-            response = requests.get(self.page.url, timeout=60)
+            print(f"🚀 Request to a given URL [{self.rss.url}] has been sent")
+            response = requests.get(self.rss.url, timeout=60)
             response.raise_for_status()
             
             # Parse obtained text from the URL based on the configured Parser
@@ -99,14 +99,14 @@ class PageMonitor:
 
 
 
-    def check_for_content_update(self, latest_persisted_hash: str, latest_persisted_content: str) -> PageContent:
+    def check_for_content_update(self, latest_persisted_hash: str, latest_persisted_content: str) -> RSSContent:
         
-        print(f"\n🔍 Checking content for Page [{self.page.name}] ({self.page.url})")
+        print(f"\n🔍 Checking content for RSS [{self.rss.name}] ({self.rss.url})")
 
         content = self._get_content()
         
         if content is None:
-            return PageContent(page_name=None, content_time=None,  content_hash=None, full_content=None, added_content=None)
+            return RSSContent(page_name=None, content_time=None,  content_hash=None, full_content=None, added_content=None)
         
         current_hash = self._get_content_hash(content)
         
@@ -132,7 +132,7 @@ class PageMonitor:
                 [notifier.subscribe(n.notify) for n in notifiers_list]
                 notifier.notify(new_content)
                 
-                return PageContent(page_name=self.page.name, content_time=now,
+                return RSSContent(page_name=self.rss.name, content_time=now,
                                    content_hash=self.last_hash, full_content=latest_persisted_content, added_content=new_content)
         
             elif current_hash == latest_persisted_hash:
@@ -140,7 +140,7 @@ class PageMonitor:
                 print("⚠️ No changes detected.")
 
                 now = datetime.now()
-                return PageContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)
+                return RSSContent(page_name=None, content_time=now, content_hash=latest_persisted_hash, full_content=latest_persisted_content, added_content=None)
 
         elif not latest_persisted_hash and self.last_hash is None:
                 
@@ -157,5 +157,5 @@ class PageMonitor:
             notifier.notify("Fist content for the Page")
             
             now = datetime.now()
-            return PageContent(page_name=self.page.name, content_time=now,
-                                content_hash=self.last_hash, full_content=content, added_content=content)
+            return RSSContent(page_name=self.rss.name, content_time=now,
+                              content_hash=self.last_hash, full_content=content, added_content=content)
