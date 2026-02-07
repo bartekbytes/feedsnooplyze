@@ -19,6 +19,22 @@ def _create_structure(engine: Engine):
 
     page_content.create(engine)
 
+    rss_content = Table(
+        'rss_content', metadata,
+        Column('rss_name', String(100), nullable=False),
+        Column('content_time', DateTime, nullable=False),
+        Column('content_hash', String(100), nullable=False),
+        Column('full_content', Text),
+        Column('added_content', Text),
+        Column('title', String(200)),
+        Column('link', String(100)),
+        Column('published', String(100)),
+        Column('summary', Text)
+        
+    )
+
+    rss_content.create(engine)
+
 
 def persistence_setup(engine: Engine, config: dict) -> bool:
     
@@ -30,7 +46,7 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
         print(f"✅ Persistence engine {persistence_engine_name} is set up.")
 
         inspector = inspect(engine)
-        if inspector.has_table("page_content"):
+        if inspector.has_table("page_content") and inspector.has_table("rss_content") :
             print(f"⚠️ {persistence_engine_name} structure exists, will be re-created")
             print(f"⚠️ Warning this procedure is descructibe!")
             shall_we_proceed = input("Do you want to proceed? [y/n] ")
@@ -40,7 +56,11 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
                 table = Table('page_content', metadata, autoload_with=engine)
                 table.drop(engine)
                 print(f"🗑️ 'page_content' table dropped.")
-                
+                table = Table('rss_content', metadata, autoload_with=engine)
+                table.drop(engine)
+                print(f"🗑️ 'rss_content' table dropped.")
+
+
                 sleep(5)
 
                 _create_structure(engine)
@@ -48,11 +68,13 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
                 sleep(5)
 
                 inspector = inspect(engine)
-                if inspector.has_table("page_content"):
+                if inspector.has_table("page_content") and inspector.has_table("rss_content"):
                     print(f"✅ 'page_content' table successfully created in the database.")
+                    print(f"✅ 'rss_content' table successfully created in the database.")
                     return True
                 else:
                     print(f"❌ Failed to create 'page_content' table in the database.")
+                    print(f"❌ Failed to create 'rss_content' table in the database.")
                     return False
             
             else:
@@ -67,11 +89,13 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
             sleep(5)
 
             inspector = inspect(engine)
-            if inspector.has_table("page_content"):
+            if inspector.has_table("page_content") and inspector.has_table("rss_content"):
                 print(f"✅ 'page_content' table successfully created in the database.")
+                print(f"✅ 'rss_content' table successfully created in the database.")
                 return True
             else:
                 print(f"❌ Failed to create 'page_content' table in the database.")
+                print(f"❌ Failed to create 'rss_content' table in the database.")
                 return False
 
     else:

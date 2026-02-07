@@ -76,6 +76,7 @@ def main():
         cscl = ContentSourceConfigLoader(reader=cscr)
         monitors = cscl.load_config() # parse and load config, return ContentSourceConfig instance
         
+        # Split config into Pages and RSS to hadle them differently
         pages_monitors = monitors.pages_config # extract list of PageMonitor from ContentSourceConfig instance
         rss_monitors = monitors.rsses_config # extract list of RSSMonitor from ContentSourceConfig instance
 
@@ -120,24 +121,66 @@ def main():
                 print(f"- 📥 Fetching data ({args.fetch_type} mode) at {formatted_time} (Loop counter: {loop_counter})...")
                 print("------------------\n")
 
+                # TODO
                 # For now, just show the content of each RSS feed
                 # Full logic to be implemented later
                 for rssm in rss_monitors:
+                    
                     rssm.notifiers = notifications_config
-                    rssm.get_rss()
+                    
+                    # to remove
+                    #print(rssm.notifiers)
+                    #rssm.get_rss()
 
-                # For each of PageMonitor instance inside pages_monitors list...
+
+
+                    # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
+                    content_available = persistence_command.is_content_available(sourcer_type="rss", object_name=rssm.rss.name)
+
+                    if content_available:
+
+                        # Get the latest PageContent (ordered by ContentTime) for a given Page
+                        rss_content = persistence_command.get_latest_by_name(sourcer_type="rss", object_name=rssm.rss.name)
+
+                        # 2. Check if there is any content change since the last saved content
+                        rssc = rssm.check_for_content_update(latest_persisted_hash=rss_content.content_hash, latest_persisted_content=rss_content.full_content)
+                    
+                        # If a new content detected, add it to the Persisitence Layer
+                        if rssc.rss_name:
+                    
+                            # 3. Add new content to Persistence
+                            persistence_command.add_rss_content(
+                                                            rss_name=rssc.rss_name, content_time=rssc.content_time, 
+                                                            content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content,
+                                                            title=rssc.title, link=rssc.link, published=rssc.published, summary=rssc.summary
+                                                         )
+                
+                    else:
+                        # There is no content stored in Persistence Layer for a given Page,
+                        # so execute check for content update with dummy hash and content
+                        rssc = rssm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
+                        persistence_command.add_rss_content(
+                                                        rss_name=rssc.rss_name, content_time=rssc.content_time,
+                                                        content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content,
+                                                        title=rssc.title, link=rssc.link, published=rssc.published, summary=rssc.summary
+                                                     )
+                    
+
+
+
+
+                # # For each of PageMonitor instance inside pages_monitors list...
                 for pm in pages_monitors:
 
                     pm.notifiers = notifications_config
                 
                     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                    content_available = persistence_command.is_content_available(page_name=pm.page.name)
+                    content_available = persistence_command.is_content_available(sourcer_type="page", object_name=pm.page.name)
 
                     if content_available:
 
                         # Get the latest PageContent (ordered by ContentTime) for a given Page
-                        page_content = persistence_command.get_latest_by_name(page_name=pm.page.name)
+                        page_content = persistence_command.get_latest_by_name(sourcer_type="page", object_name=pm.page.name)
 
                         # 2. Check if there is any content change since the last saved content
                         pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
@@ -146,16 +189,21 @@ def main():
                         if pc.page_name:
                     
                             # 3. Add new content to Persistence
-                            persistence_command.add_content(page_name=pc.page_name, content_time=pc.content_time, 
+                            persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time, 
                                                          content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
                     else:
                         # There is no content stored in Persistence Layer for a given Page,
                         # so execute check for content update with dummy hash and content
                         pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
-                        persistence_command.add_content(page_name=pc.page_name, content_time=pc.content_time,
+                        persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time,
                                                      content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
+
+
+
+
+
 
                 # Infinite loop for 'interactive' mode.
                 # For 'oneshot' mode, break the loop after the first run.

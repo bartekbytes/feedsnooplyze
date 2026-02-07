@@ -17,11 +17,12 @@ class RSSContent:
     """
     # Attributes for RSS Content
     title: str
-    link_to_content: str
-    content_summary: str
-    
+    link: str
+    published: str
+    summary: str
+
     # Attributes for Persistence Layer
-    page_name: str
+    rss_name: str
     content_time: str
     content_hash: str
     full_content: str

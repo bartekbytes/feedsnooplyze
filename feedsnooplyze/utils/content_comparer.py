@@ -25,7 +25,7 @@ class ContentComparer:
         Returns:
             str: A space-separated string of words that were added.
         """
-        diff = difflib.ndiff(self.old_string.split(), self.new_string.split())
+        diff = difflib.ndiff(str(self.old_string).split(), str(self.new_string).split())
         added = [word[2:] for word in diff if word.startswith('+ ')]
         return ' '.join(added)
 

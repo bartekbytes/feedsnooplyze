@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 # feedsnooplyze modules
-from feedsnooplyze.page import Page, PageContent
+from feedsnooplyze.sourcer.page import Page, PageContent
 from feedsnooplyze.parser import ParserBase
 from feedsnooplyze.utils.content_comparer import ContentComparer
 from feedsnooplyze.configuration.config import NotificationConfigBase
