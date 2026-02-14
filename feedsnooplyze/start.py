@@ -121,9 +121,9 @@ def main():
                 print(f"- 📥 Fetching data ({args.fetch_type} mode) at {formatted_time} (Loop counter: {loop_counter})...")
                 print("------------------\n")
 
-                # TODO
-                # For now, just show the content of each RSS feed
-                # Full logic to be implemented later
+                ###############
+                # RRS logic
+                ##############'
                 for rssm in rss_monitors:
                     
                     rssm.notifiers = notifications_config
@@ -205,8 +205,9 @@ def main():
                             )
 
                             
-
-                # # For each of PageMonitor instance inside pages_monitors list...
+                ###############
+                # Page logic
+                ##############'
                 # for pm in pages_monitors:
 
                 #     pm.notifiers = notifications_config
