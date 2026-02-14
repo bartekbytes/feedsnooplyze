@@ -80,9 +80,6 @@ def main():
         pages_monitors = monitors.pages_config # extract list of PageMonitor from ContentSourceConfig instance
         rss_monitors = monitors.rsses_config # extract list of RSSMonitor from ContentSourceConfig instance
 
-        print(f"pages_monitors loaded: {pages_monitors}")
-        print(f"rss_monitors loaded: {rss_monitors}")
-
         # Create and Connect to Persistence Engine
         persistence_engine = get_engine(persistence_config)
         print(persistence_engine)
@@ -128,12 +125,13 @@ def main():
                     
                     rssm.notifiers = notifications_config
                     
-                    # 1. Check if there is already any RSSContent available in Persistence Layer for a given RSS
+                    # Check if there is already any RSSContent available in Persistence Layer for a given RSS
                     content_available = persistence_command.is_content_available(sourcer_type="rss", object_name=rssm.rss.name)
 
                     if content_available:
                         # RSS Content already available in the Persistence Layer,
                         # let's check if there are any updates.
+                        print(f"RSS Content already exists for {rssm.rss.name}")
 
                         # Get the latest RSSContent (ordered by ContentTime) for a given RSS
                         rss_content = persistence_command.get_latest_by_name(sourcer_type="rss", object_name=rssm.rss.name)
@@ -141,9 +139,11 @@ def main():
                         # Check if there is any content change since the last saved content
                         rssc = rssm.check_for_content_update(latest_persisted_hash=rss_content.content_hash, latest_persisted_content=rss_content.full_content)
 
-                        # if a new content detected, add it to the Persistence Layer
+                        # If a new content detected, add it to the Persistence Layer
                         if rssc.rss_name:
                         
+                            print(f"New RSS Content has been detected for {rssc.rss_name}")
+                            
                             # Add new content to Persistence
                             persistence_command.add_rss_content(
                                 rss_name=rssc.rss_name, content_time=rssc.content_time,
@@ -172,9 +172,7 @@ def main():
                                         title=rss_feed.title, link=rss_feed.link, published=rss_feed.published, summary=rss_feed.summary
                                     )
                         else:
-                            print(f"New new content for RSS '{rssm.name}' hasn't been detected")
-
-
+                            print(f"No new content for RSS '{rssm.name}' hasn't been detected")
 
                     else:
                         # RSS Content not available in the Persistence Layer,
@@ -208,39 +206,44 @@ def main():
                 ###############
                 # Page logic
                 ##############'
-                # for pm in pages_monitors:
+                for pm in pages_monitors:
 
-                #     pm.notifiers = notifications_config
+                    pm.notifiers = notifications_config
                 
-                #     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                #     content_available = persistence_command.is_content_available(sourcer_type="page", object_name=pm.page.name)
+                    # Check if there is already any PageContent available in Persistence Layer for a given Page
+                    content_available = persistence_command.is_content_available(sourcer_type="page", object_name=pm.page.name)
 
-                #     if content_available:
+                    if content_available:
+                        # Page Content already available in the Persistence Layer,
+                        # let's check if there are any updates.
+                        print(f"Page Content already exists for {pm.page.name}")
 
-                #         # Get the latest PageContent (ordered by ContentTime) for a given Page
-                #         page_content = persistence_command.get_latest_by_name(sourcer_type="page", object_name=pm.page.name)
+                        # Get the latest PageContent (ordered by ContentTime) for a given Page
+                        page_content = persistence_command.get_latest_by_name(sourcer_type="page", object_name=pm.page.name)
 
-                #         # 2. Check if there is any content change since the last saved content
-                #         pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
-                    
-                #         # If a new content detected, add it to the Persisitence Layer
-                #         if pc.page_name:
-                    
-                #             # 3. Add new content to Persistence
-                #             persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time, 
-                #                                          content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                        # Check if there is any content change since the last saved content
+                        pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
                 
-                #     else:
-                #         # There is no content stored in Persistence Layer for a given Page,
-                #         # so execute check for content update with dummy hash and content
-                #         pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
-                #         persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time,
-                #                                      content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                        # If a new content detected, add it to the Persisitence Layer
+                        if pc.page_name:
+
+                            print(f"New Page Content has been detected for {pc.page_name}")
                 
+                            # Add new content to Persistence
+                            persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time, 
+                                                        content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+            
+                        else:
+                          print(f"No new content for Page '{pm.page.name}' hasn't been detected")  
 
-
-
-
+                    else:
+                        # Page Content not available in the Persistence Layer,
+                        # so it's the first entry for the given Page
+                        print(f"Page doesn't exists for {pm.page.name}, adding...")
+                        pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
+                        persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time,
+                                                    content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                
 
 
                 # Infinite loop for 'interactive' mode.
