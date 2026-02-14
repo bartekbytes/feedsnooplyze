@@ -4,6 +4,7 @@ from time import sleep
 # feedsnooplyze modules
 from .persistence_engine import PersistenceEngineIcon
 
+TABLES = ['page_content', 'rss_content', 'rss_feed_content']
 
 def _create_structure(engine: Engine):
     metadata = MetaData()
@@ -16,8 +17,34 @@ def _create_structure(engine: Engine):
         Column('full_content', Text),
         Column('added_content', Text)
     )
-
     page_content.create(engine)
+
+    rss_content = Table(
+        'rss_content', metadata,
+        Column('rss_name', String(100), nullable=False),
+        Column('content_time', DateTime, nullable=False),
+        Column('content_hash', String(100), nullable=False),
+        Column('full_content', Text),
+        Column('added_content', Text)
+        
+    )
+    rss_content.create(engine)
+
+    rss_feed_content = Table(
+        'rss_feed_content', metadata,
+        Column('rss_name', String(100), nullable=False),
+        Column('rss_feed_name', String(200), nullable=False),
+        Column('content_time', DateTime),
+        Column('content_hash', String(100)),
+        Column('full_content', Text),
+        Column('added_content', Text),
+        Column('title', Text),
+        Column('link', Text),
+        Column('published', Text),
+        Column('summary', Text)
+        
+    )
+    rss_feed_content.create(engine)
 
 
 def persistence_setup(engine: Engine, config: dict) -> bool:
@@ -30,29 +57,34 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
         print(f"✅ Persistence engine {persistence_engine_name} is set up.")
 
         inspector = inspect(engine)
-        if inspector.has_table("page_content"):
+        if any([inspector.has_table(x) for x in TABLES]): # TODO: all or any?
             print(f"⚠️ {persistence_engine_name} structure exists, will be re-created")
             print(f"⚠️ Warning this procedure is descructibe!")
             shall_we_proceed = input("Do you want to proceed? [y/n] ")
             if shall_we_proceed == 'y':
                 
                 metadata = MetaData()
-                table = Table('page_content', metadata, autoload_with=engine)
-                table.drop(engine)
-                print(f"🗑️ 'page_content' table dropped.")
                 
+                for t in TABLES:
+                    table = Table(t, metadata, autoload_with=engine)
+                    table.drop(engine)
+                    print(f"🗑️ '{t}' table dropped.")
+
+                # give some time for the DB Engine
                 sleep(5)
 
                 _create_structure(engine)
 
+                # ...here too :) Can be done maybe with a thread and async?
                 sleep(5)
 
                 inspector = inspect(engine)
-                if inspector.has_table("page_content"):
-                    print(f"✅ 'page_content' table successfully created in the database.")
+                if all([inspector.has_table(x) for x in TABLES]):
+                    for t in TABLES:
+                        print(f"✅ '{t}' table successfully created in the database.")
                     return True
                 else:
-                    print(f"❌ Failed to create 'page_content' table in the database.")
+                    print(f"❌ Failed to create the structure in the database.")
                     return False
             
             else:
@@ -64,14 +96,16 @@ def persistence_setup(engine: Engine, config: dict) -> bool:
 
             _create_structure(engine)
 
+            # give some time for the DB Engine
             sleep(5)
 
             inspector = inspect(engine)
-            if inspector.has_table("page_content"):
-                print(f"✅ 'page_content' table successfully created in the database.")
+            if all([inspector.has_table(x) for x in TABLES]):
+                for t in TABLES:
+                    print(f"✅ '{t}' table successfully created in the database.")
                 return True
             else:
-                print(f"❌ Failed to create 'page_content' table in the database.")
+                print(f"❌ Failed to create the structure in the database.")
                 return False
 
     else:

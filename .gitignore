@@ -16,3 +16,7 @@ __pycache__/
 
 # pytest cache
 .pytest_cache/
+
+# local config files
+config.yaml
+feedsnooplyze.yaml
