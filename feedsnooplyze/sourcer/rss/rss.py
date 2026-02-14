@@ -5,6 +5,7 @@ from typing import Optional
 class RSS:
     """
     Represents a RSS with a name, URL, and optional description.
+    Values are taken from the Configuration part of the app.
 
     Attributes:
         name (str): The name of the RSS.

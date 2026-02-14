@@ -3,7 +3,7 @@ version: "3.9"
 services:
   # PostgreSQL database
   postgresql_db:
-    image: postgres:17
+    image: postgres:17.8
     container_name: postgresql-db
     restart: always
     ports:

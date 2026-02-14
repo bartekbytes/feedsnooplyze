@@ -8,7 +8,7 @@ from feedsnooplyze.parser import *
 from feedsnooplyze.persistence import get_engine, persistence_setup, PersistenceCommand
 from feedsnooplyze.configuration.config import ConfigLoader, ConfigReader
 from feedsnooplyze.configuration.content_source_config import ContentSourceConfigReader, ContentSourceConfigLoader
-
+from feedsnooplyze.sourcer.rss import RSSFeed
 
 def main():
     """
@@ -128,76 +128,113 @@ def main():
                     
                     rssm.notifiers = notifications_config
                     
-                    # to remove
-                    #print(rssm.notifiers)
-                    #rssm.get_rss()
-
-
-
-                    # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
+                    # 1. Check if there is already any RSSContent available in Persistence Layer for a given RSS
                     content_available = persistence_command.is_content_available(sourcer_type="rss", object_name=rssm.rss.name)
 
                     if content_available:
+                        # RSS Content already available in the Persistence Layer,
+                        # let's check if there are any updates.
 
-                        # Get the latest PageContent (ordered by ContentTime) for a given Page
+                        # Get the latest RSSContent (ordered by ContentTime) for a given RSS
                         rss_content = persistence_command.get_latest_by_name(sourcer_type="rss", object_name=rssm.rss.name)
 
-                        # 2. Check if there is any content change since the last saved content
+                        # Check if there is any content change since the last saved content
                         rssc = rssm.check_for_content_update(latest_persisted_hash=rss_content.content_hash, latest_persisted_content=rss_content.full_content)
-                    
-                        # If a new content detected, add it to the Persisitence Layer
+
+                        # if a new content detected, add it to the Persistence Layer
                         if rssc.rss_name:
-                    
-                            # 3. Add new content to Persistence
+                        
+                            # Add new content to Persistence
                             persistence_command.add_rss_content(
-                                                            rss_name=rssc.rss_name, content_time=rssc.content_time, 
-                                                            content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content,
-                                                            title=rssc.title, link=rssc.link, published=rssc.published, summary=rssc.summary
-                                                         )
-                
+                                rss_name=rssc.rss_name, content_time=rssc.content_time,
+                                content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content
+                            )
+                        
+                            # If new contenct detected we need to go through all RSSFeed
+                            # For a given RSS, get all RSSFeeds
+                            rss_feeds = []
+                            for rss_feed in rssm.get_rss_feeds_raw().entries:    
+                                rss_feeds.append(RSSFeed(rss_feed.title, rss_feed.link, rss_feed.published, rss_feed.summary))
+                        
+                            ### And then for RSSFeed, apply the logic
+                            for rss_feed in rss_feeds:
+
+                                # Check if there is already any RSSFeedContent available in Persistence Layer for a given RSSFeed
+                                rss_feed_content_available = persistence_command.is_content_available(sourcer_type="rssfeed", object_name=rss_feed.title)
+
+                                if rss_feed_content_available:
+                                    print(f"RSS Feed already exists for {rss_feed.title}")
+                                else:
+                                    print(f"RSS Feed doesn't exists for {rss_feed.title}, adding...")
+                                    persistence_command.add_rss_feed_content(
+                                        rss_name=rssc.rss_name, rss_feed_name=rss_feed.title, content_time=None,
+                                        content_hash=None, full_content=None, added_content=None,
+                                        title=rss_feed.title, link=rss_feed.link, published=rss_feed.published, summary=rss_feed.summary
+                                    )
+                        else:
+                            print(f"New new content for RSS '{rssm.name}' hasn't been detected")
+
+
+
                     else:
-                        # There is no content stored in Persistence Layer for a given Page,
-                        # so execute check for content update with dummy hash and content
+                        # RSS Content not available in the Persistence Layer,
+                        # so it's the first entry for the given RSS
+                        print(f"RSS doesn't exists for {rssm.rss.name}, adding...")
                         rssc = rssm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
                         persistence_command.add_rss_content(
-                                                        rss_name=rssc.rss_name, content_time=rssc.content_time,
-                                                        content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content,
-                                                        title=rssc.title, link=rssc.link, published=rssc.published, summary=rssc.summary
-                                                     )
-                    
+                            rss_name=rssc.rss_name, content_time=rssc.content_time,
+                            content_hash=rssc.content_hash, full_content=rssc.full_content, added_content=rssc.added_content
+                        )
 
+                        # For a given RSS, get all RSSFeeds
+                        rss_feeds = []
+                        for rss_feed in rssm.get_rss_feeds_raw().entries:    
+                            rss_feeds.append(RSSFeed(rss_feed.title, rss_feed.link, rss_feed.published, rss_feed.summary))
+                        
+                        # And then for RSSFeed, apply the logic
+                        for rss_feed in rss_feeds:
 
+                            # As this is the first time we inserting RSSFeeds for a given RSS,
+                            # there is no need to check if RSSFeed exists or not, because it doesn't exist,
+                            # so we just simply insert a new RSSFeed into the Persistence Layer
+                            print(f"RSS Feed doesn't exists for {rss_feed.title}, adding...")
+                            persistence_command.add_rss_feed_content(
+                                rss_name=rssc.rss_name, rss_feed_name=rss_feed.title, content_time=None,
+                                content_hash=None, full_content=None, added_content=None,
+                                title=rss_feed.title, link=rss_feed.link, published=rss_feed.published, summary=rss_feed.summary
+                            )
 
+                            
 
                 # # For each of PageMonitor instance inside pages_monitors list...
-                for pm in pages_monitors:
+                # for pm in pages_monitors:
 
-                    pm.notifiers = notifications_config
+                #     pm.notifiers = notifications_config
                 
-                    # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
-                    content_available = persistence_command.is_content_available(sourcer_type="page", object_name=pm.page.name)
+                #     # 1. Check if there is already any PageContent available in Persistence Layer for a given Page
+                #     content_available = persistence_command.is_content_available(sourcer_type="page", object_name=pm.page.name)
 
-                    if content_available:
+                #     if content_available:
 
-                        # Get the latest PageContent (ordered by ContentTime) for a given Page
-                        page_content = persistence_command.get_latest_by_name(sourcer_type="page", object_name=pm.page.name)
+                #         # Get the latest PageContent (ordered by ContentTime) for a given Page
+                #         page_content = persistence_command.get_latest_by_name(sourcer_type="page", object_name=pm.page.name)
 
-                        # 2. Check if there is any content change since the last saved content
-                        pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
+                #         # 2. Check if there is any content change since the last saved content
+                #         pc = pm.check_for_content_update(latest_persisted_hash=page_content.content_hash, latest_persisted_content=page_content.full_content)
                     
-                        # If a new content detected, add it to the Persisitence Layer
-                        if pc.page_name:
+                #         # If a new content detected, add it to the Persisitence Layer
+                #         if pc.page_name:
                     
-                            # 3. Add new content to Persistence
-                            persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time, 
-                                                         content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                #             # 3. Add new content to Persistence
+                #             persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time, 
+                #                                          content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
-                    else:
-                        # There is no content stored in Persistence Layer for a given Page,
-                        # so execute check for content update with dummy hash and content
-                        pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
-                        persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time,
-                                                     content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
+                #     else:
+                #         # There is no content stored in Persistence Layer for a given Page,
+                #         # so execute check for content update with dummy hash and content
+                #         pc = pm.check_for_content_update(latest_persisted_hash=None, latest_persisted_content=None)
+                #         persistence_command.add_page_content(page_name=pc.page_name, content_time=pc.content_time,
+                #                                      content_hash=pc.content_hash, full_content=pc.full_content, added_content=pc.added_content)
                 
 
 
